@@ -1,0 +1,48 @@
+---
+- name: Setup Nginx
+  hosts: all
+  become: yes
+
+  vars:
+    # Used in filepaths
+    site_name: "OSINTwebserver"
+
+  tasks:
+    - name: Create the needed folders
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+      with_items: ["/etc/nginx/sites-available", "/etc/nginx/sites-enabled"]
+
+    - name: Create main nginx config file
+      template:
+        src: "{{ playbook_dir }}/../../configFiles/nginx/nginx.conf"
+        dest: "/etc/nginx/nginx.conf"
+      notify:
+        - restart nginx
+
+    - name: Create nginx vhost config file
+      template:
+        src: "{{ playbook_dir }}/../../configFiles/nginx/{{ site_name }}Nginx.conf"
+        dest: "/etc/nginx/sites-available/{{ site_name }}.conf"
+      notify:
+        - restart nginx
+
+    - name: Create symlinks
+      file: src=/etc/nginx/sites-available/{{ site_name }}.conf dest=/etc/nginx/sites-enabled/{{ site_name }}.conf state=link
+      notify:
+        - restart nginx
+
+    - name: Remove default nginx vhost configuration
+      file: path=/etc/nginx/sites-enabled/default state=absent
+      notify:
+        - restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
