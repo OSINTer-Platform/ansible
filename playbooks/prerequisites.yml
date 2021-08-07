@@ -1,0 +1,32 @@
+---
+
+- name: Installing prerequisite
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Setting the distribution-specific variables for Archlinux
+      set_fact: 
+        pip_package: "python-pip"
+      when: ansible_distribution == "Archlinux"
+
+    - name: Setting the distribution-specific variables for Debian/Ubuntu
+      set_fact:
+        pip_package: "python3-pip"
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    - name: Updating the system
+      package:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Install postgresql and nginx
+      package:
+        name: postgresql
+        name: nginx
+        state: latest
+
+
+    - name: Install pip
+      package:
+        name: "{{ pip_package }}"
