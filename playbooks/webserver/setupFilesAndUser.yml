@@ -1,0 +1,43 @@
+---
+- name: Setup files and user for webserver
+  hosts: all
+  become: yes
+  
+  vars:
+    # Used in filepaths
+    site_name: "OSINTwebserver"
+
+  tasks:
+    - name: Make sure the www-data group is present
+      group:
+          name: "www-data"
+    - name: Setup user for running the webserver
+      user:
+          name: "osinter-web"
+          group: "www-data"
+          create_home: false
+          shell: "/usr/sbin/nologin"
+
+    - name: Clone the OSINTwebserver from git
+      git:
+          repo: "https://github.com/Combitech-DK/OSINTwebserver.git"
+          dest: "/srv/OSINTwebserver"
+          force: yes
+
+    - name: Clone OSINTmodules
+      git:
+          repo: "https://github.com/Combitech-DK/OSINTmodules.git"
+          dest: "/srv/OSINTwebserver/OSINTmodules"
+
+    - name: Clone OSINTprofiles
+      git:
+          repo: "https://github.com/Combitech-DK/OSINTprofiles.git"
+          dest: "/srv/OSINTwebserver/OSINTprofiles"
+
+    - name: Changing the owner of the OSINTwebserver folder
+      file:
+          dest: "/srv/OSINTwebserver"
+          mode: 0744
+          owner: "osinter-web"
+          group: "www-data"
+          recurse: yes
