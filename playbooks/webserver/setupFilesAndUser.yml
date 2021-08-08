@@ -6,6 +6,7 @@
   vars:
     # Used in filepaths
     site_name: "OSINTwebserver"
+    osinter_web_pass: ""
 
   tasks:
     - name: Make sure the www-data group is present
@@ -17,6 +18,7 @@
           group: "www-data"
           create_home: false
           shell: "/usr/sbin/nologin"
+          password: "{{ osinter_web_pass|password_hash('sha512') }}"
 
     - name: Clone the OSINTwebserver from git
       git:
