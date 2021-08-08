@@ -1,0 +1,41 @@
+---
+- name: Setup the python enviroment for flask and gunicorn
+  hosts: all
+  become: yes
+  become_user: "osinter-web"
+  become_method: 'sudo'
+
+  vars:
+    # Used in filepaths
+    site_name: "OSINTwebserver"
+
+  tasks:
+    - name: Create python enviroment
+      raw: cd /srv/OSINTwebserver; python3 -m venv "{{ site_name }}env"
+
+    - name: Update pip
+      pip:
+        name: pip
+        state: latest
+        virtualenv: "/srv/{{ site_name }}/{{ site_name}}env"
+
+    - name: Install python webserver dependencies
+      pip:
+        requirements: "/srv/{{ site_name }}/requirements.txt"
+        virtualenv: "/srv/{{ site_name }}/{{ site_name }}env"
+
+    - name: Install service for running the webserver
+      template:
+        src: "{{ playbook_dir }}/../../configFiles/services/{{ site_name }}.service"
+        dest: "/etc/systemd/system/"
+      become: yes
+      become_user: root
+
+    - name: Restart custom service, also issue daemon-reload to pick up config changes
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: "{{ site_name }}.service"
+      become: yes
+      become_user: root
+
