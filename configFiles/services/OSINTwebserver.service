@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve {{ site_name }}
+After=network.target
+
+[Service]
+User=osinter-web
+Group=www-data
+WorkingDirectory=/srv/{{ site_name }}
+Environment="PATH=/srv/{{ site_name }}/{{ site_name }}env/bin"
+ExecStart=/srv/{{ site_name }}/{{ site_name }}env/bin/gunicorn --workers 4 --bind unix:{{ site_name }}.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
