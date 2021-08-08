@@ -1,0 +1,10 @@
+---
+- name: Setup the file and user for OSINTwebserver
+
+  vars:
+    project_name: "OSINTwebserver"
+    user_group: "www-data"
+    user_name: "osinter-web"
+    user_password: ""
+
+  import_playbook: "{{ playbook_dir }}/../generic/setupFileAndUser.yml"

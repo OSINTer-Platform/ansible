@@ -5,7 +5,7 @@
 
   vars:
     # Used in filepaths
-    site_name: "OSINTwebserver"
+    project_name: "OSINTwebserver"
 
   tasks:
     - name: Create the needed folders
@@ -26,13 +26,13 @@
 
     - name: Create nginx vhost config file
       template:
-        src: "{{ playbook_dir }}/../../configFiles/nginx/{{ site_name }}Nginx.conf"
-        dest: "/etc/nginx/sites-available/{{ site_name }}.conf"
+        src: "{{ playbook_dir }}/../../configFiles/nginx/{{ project_name }}Nginx.conf"
+        dest: "/etc/nginx/sites-available/{{ project_name }}.conf"
       notify:
         - restart nginx
 
     - name: Create symlinks
-      file: src=/etc/nginx/sites-available/{{ site_name }}.conf dest=/etc/nginx/sites-enabled/{{ site_name }}.conf state=link
+      file: src=/etc/nginx/sites-available/{{ project_name }}.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf state=link
       notify:
         - restart nginx
 

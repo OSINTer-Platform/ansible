@@ -7,26 +7,26 @@
 
   vars:
     # Used in filepaths
-    site_name: "OSINTwebserver"
+    project_name: "OSINTwebserver"
 
   tasks:
     - name: Create python enviroment
-      raw: cd /srv/OSINTwebserver; python3 -m venv "{{ site_name }}env"
+      raw: cd /srv/OSINTwebserver; python3 -m venv "{{ project_name }}env"
 
     - name: Update pip
       pip:
         name: pip
         state: latest
-        virtualenv: "/srv/{{ site_name }}/{{ site_name}}env"
+        virtualenv: "/srv/{{ project_name }}/{{ project_name}}env"
 
     - name: Install python webserver dependencies
       pip:
-        requirements: "/srv/{{ site_name }}/requirements.txt"
-        virtualenv: "/srv/{{ site_name }}/{{ site_name }}env"
+        requirements: "/srv/{{ project_name }}/requirements.txt"
+        virtualenv: "/srv/{{ project_name }}/{{ project_name }}env"
 
     - name: Install service for running the webserver
       template:
-        src: "{{ playbook_dir }}/../../configFiles/services/{{ site_name }}.service"
+        src: "{{ playbook_dir }}/../../configFiles/services/{{ project_name }}.service"
         dest: "/etc/systemd/system/"
       become: yes
       become_user: root
@@ -35,7 +35,7 @@
       systemd:
         state: restarted
         daemon_reload: yes
-        name: "{{ site_name }}.service"
+        name: "{{ project_name }}.service"
       become: yes
       become_user: root
 
