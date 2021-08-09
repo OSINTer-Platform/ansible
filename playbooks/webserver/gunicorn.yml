@@ -1,0 +1,24 @@
+---
+- name: Setup the service for gunicorn
+  hosts: all
+  become: yes
+  become_user: "{{ user_name }}"
+  become_method: 'sudo'
+
+  tasks:
+
+    - name: Install service for running the webserver
+      template:
+        src: "{{ playbook_dir }}/../../configFiles/services/{{ project_name }}.service"
+        dest: "/etc/systemd/system/"
+      become: yes
+      become_user: root
+
+    - name: Restart custom service, also issue daemon-reload to pick up config changes
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: "{{ project_name }}.service"
+      become: yes
+      become_user: root
+

@@ -1,0 +1,21 @@
+---
+- name: Setup a python enviroment
+  hosts: all
+  become: yes
+  become_user: "{{ user_name }}"
+  become_method: "sudo"
+
+  tasks:
+    - name: Create python enviroment
+      raw: cd "/srv/{{ project_name }}"; python3 -m venv "{{ project_name }}env"
+
+    - name: Update pip
+      pip:
+        name: pip
+        state: latest
+        virtualenv: "/srv/{{ project_name }}/{{ project_name}}env"
+
+    - name: Install python webserver dependencies
+      pip:
+        requirements: "/srv/{{ project_name }}/requirements.txt"
+        virtualenv: "/srv/{{ project_name }}/{{ project_name }}env"

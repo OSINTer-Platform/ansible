@@ -8,10 +8,17 @@
     project_name: "OSINTwebserver"
     user_password: ""
 
-- name: Setup the python enviroment and the gunicorn/flask service
-  import_playbook: "{{ playbook_dir }}/pythonEnviroment.yml"
+- name: Setup the python enviroment for the webserver
+  import_playbook: "{{ playbook_dir }}/../generic/pythonEnviroment.yml"
   vars:
     project_name: "OSINTwebserver"
+    user_name: "osinter-web"
+
+- name: Setup the service for the gunicorn instance
+  import_playbook: "{{ playbook_dir }}/gunicorn.yml"
+  vars:
+    project_name: "OSINTwebserver"
+    user_name: "osinter-web"
 
 - name: Finally, setting up the nginx service
   import_playbook: "{{ playbook_dir }}/nginx.yml"
