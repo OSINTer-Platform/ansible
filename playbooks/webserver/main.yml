@@ -1,0 +1,19 @@
+- hosts: all
+
+- name: Setup files and users for the webserver
+  import_playbook: "{{ playbook_dir }}/../generic/setupFileAndUser.yml"
+  vars:
+    user_group: "www-data"
+    user_name: "osinter-web"
+    project_name: "OSINTwebserver"
+    user_password: ""
+
+- name: Setup the python enviroment and the gunicorn/flask service
+  import_playbook: "{{ playbook_dir }}/pythonEnviroment.yml"
+  vars:
+    project_name: "OSINTwebserver"
+
+- name: Finally, setting up the nginx service
+  import_playbook: "{{ playbook_dir }}/nginx.yml"
+  vars:
+    project_name: "OSINTwebserver"
