@@ -1,0 +1,20 @@
+- hosts: all
+
+- name: Setup files and users for the dbserver
+  import_playbook: "{{ playbook_dir }}/../generic/setupFileAndUser.yml"
+  vars:
+    user_group: "osinter-db"
+    user_name: "osinter-db"
+    project_name: "OSINTbackend"
+    user_password: ""
+
+- name: Setup the python enviroment for the dbserver
+  import_playbook: "{{ playbook_dir }}/../generic/pythonEnviroment.yml"
+  vars:
+    project_name: "OSINTwebserver"
+    user_name: "osinter-web"
+
+- name: Configure the postgresql DB
+  import_playbook: "{{ playbook_dir }}/postgresql.yml"
+
+
