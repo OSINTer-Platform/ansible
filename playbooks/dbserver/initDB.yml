@@ -1,0 +1,40 @@
+---
+- name: Initialize osinter DB and apply custom configurations
+  hosts: all
+  become: true
+  become_user: "{{ user_name }}"
+  become_method: "sudo"
+
+  tasks:
+
+    - name: Initialize osinter db and local enviroment using python script from OSINTbackend
+      shell: 'cd /srv/{{ project_name }}; {{ project_name }}env/python3 -m "scripts.initiateScrapingBackend"'
+
+    - name: Locating the pg_hba.conf file
+      find:
+        paths: /
+        patterns: "pg_hba.conf"
+      register: pg_hba_file
+      become: yes
+      become_user: root
+
+    - name: Apply custom config to postgresql config
+      template:
+        src: "{{ playbook_dir }}/../../configFiles/postgres/trust.conf"
+        dest: "{{ pg_hba_file }}"
+      become: yes
+      become_user: root
+
+    - name: Restart postgresql to pickup the new config file
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted
+      become: yes
+      become_user: root
+
+    - name: Setup crontab for scraping
+      ansible.builtin.cron:
+        name: OSINTbackend scraping
+        special_time: hourly
+        job: 'cd /srv/{{ project_name }} && {{ project_name }}env/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log && ./pushArticles.sh >> ./logs/git.log 2>> ./logs/gitErrors.log'
+
