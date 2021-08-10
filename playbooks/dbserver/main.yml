@@ -11,10 +11,10 @@
 - name: Setup the python enviroment for the dbserver
   import_playbook: "{{ playbook_dir }}/../generic/pythonEnviroment.yml"
   vars:
-    project_name: "OSINTwebserver"
-    user_name: "osinter-web"
+    project_name: "OSINTbackend"
+    user_name: "osinter-db"
 
-- name: Configure the postgresql DB
+- name: Setup postgresql
   import_playbook: "{{ playbook_dir }}/postgresql.yml"
 
 

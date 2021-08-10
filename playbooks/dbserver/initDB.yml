@@ -8,7 +8,7 @@
   tasks:
 
     - name: Initialize osinter db and local enviroment using python script from OSINTbackend
-      shell: 'cd /srv/{{ project_name }}; {{ project_name }}env/python3 -m "scripts.initiateScrapingBackend"'
+      shell: 'cd /srv/{{ project_name }}; {{ project_name }}env/bin/python3 -m "scripts.initiateScrapingBackend"'
 
     - name: Locating the pg_hba.conf file
       find:
@@ -21,8 +21,8 @@
 
     - name: Apply custom config to postgresql config
       template:
-        src: "{{ playbook_dir }}/../../configFiles/postgres/trust.conf"
-        dest: "{{ pg_hba_file }}"
+        src: "{{ playbook_dir }}/../../configFiles/postgres/custom.conf"
+        dest: "{{ pg_hba_file.files[0].path }}"
       become: yes
       become_user: root
 
