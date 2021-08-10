@@ -18,3 +18,8 @@
   import_playbook: "{{ playbook_dir }}/postgresql.yml"
 
 
+- name: Setup crontab for performing the scraping hourly
+  import_playbook: "{{ playbook_dir }}/cron.yml"
+  vars:
+    user_name: "osinter-db"
+    project_name: "OSINTbackend"

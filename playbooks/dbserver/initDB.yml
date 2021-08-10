@@ -32,10 +32,3 @@
         state: restarted
       become: yes
       become_user: root
-
-    - name: Setup crontab for scraping
-      ansible.builtin.cron:
-        name: OSINTbackend scraping
-        special_time: hourly
-        job: 'cd /srv/{{ project_name }} && {{ project_name }}env/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log && ./pushArticles.sh >> ./logs/git.log 2>> ./logs/gitErrors.log'
-

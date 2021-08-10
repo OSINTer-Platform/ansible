@@ -1,0 +1,29 @@
+---
+- name: Setup crontab for performing the scraping hourly
+  hosts: all
+  become: yes
+  become_user: "root"
+  become_method: "sudo"
+
+  tasks:
+
+    - name: Install cronie for handling the crontab
+      package:
+        name: cronie
+        state: latest
+
+    - name: Start the newly installed cron daemon
+      ansible.builtin.service:
+        name: cronie
+        state: started
+
+
+    - name: Setup crontab for scraping
+      ansible.builtin.cron:
+        name: OSINTbackend scraping
+        special_time: hourly
+        job: 'cd /srv/{{ project_name }} && {{ project_name }}env/bin/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log && ./pushArticles.sh >> ./logs/git.log 2>> ./logs/gitErrors.log'
+      become: yes
+      become_user: "{{ user_name }}"
+      become_method: "sudo"
+
