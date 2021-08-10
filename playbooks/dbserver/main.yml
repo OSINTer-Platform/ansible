@@ -17,6 +17,11 @@
 - name: Setup postgresql
   import_playbook: "{{ playbook_dir }}/postgresql.yml"
 
+- name: Setup own postgresql DB and apply custom configurations
+  import_playbook: "{{ playbook_dir}}/initDB.yml"
+  vars:
+    user_name: "osinter-db"
+    project_name: "OSINTbackend"
 
 - name: Setup crontab for performing the scraping hourly
   import_playbook: "{{ playbook_dir }}/cron.yml"
