@@ -1,0 +1,39 @@
+---
+- name: Setup postgresql
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Installing postgresql
+      package:
+        name: postgresql
+        state: latest
+
+    - name: Initializing the database cluster
+      raw: initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
+      become: true
+      become_user: postgres
+      become_method: "sudo"
+
+    - name: Start and enable postgresql to generate the needed config files
+      ansible.builtin.service:
+        name: postgresql
+        enabled: yes
+        state: started
+
+    - name: Locating the pg_hba.conf file
+      find:
+        paths: /
+        patterns: "pg_hba.conf"
+      register: pg_hba_file
+
+    - name: Installing the config file trusting the postgres DB user
+      template:
+        src: "{{ playbook_dir }}/../../configFiles/postgres/trust.conf"
+        dest: "{{ pg_hba_file.files[0].path }}"
+
+    - name: Restart postgresql to pickup the new config file
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted
