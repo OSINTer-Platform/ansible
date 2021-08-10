@@ -26,6 +26,7 @@
       find:
         paths: /
         patterns: "pg_hba.conf"
+        recurse: yes
       register: pg_hba_file
 
     - name: Installing the config file trusting the postgres DB user
