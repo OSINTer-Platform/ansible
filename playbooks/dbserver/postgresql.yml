@@ -2,6 +2,7 @@
 - name: Setup postgresql
   hosts: all
   become: true
+  become_method: "sudo"
 
   tasks:
 
@@ -23,28 +24,26 @@
         state: started
 
     - name: Locating the pg_hba.conf file
-      find:
-        paths: /
-        patterns: "pg_hba.conf"
-        recurse: yes
+      shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
       register: pg_hba_file
+      become: yes
+      become_user: postgres
 
     - name: Locating the postgresql.conf file
-      find:
-        paths: /
-        patterns: "postgresql.conf"
-        recurse: yes
+      shell: "psql -c 'SHOW config_file' |& grep -o '/.*/postgresql.conf'"
       register: postgresql_conf
+      become: yes
+      become_user: postgres
 
     - name: Installing the config file trusting the postgres DB user
       template:
         src: "{{ playbook_dir }}/../../configFiles/postgres/trust.conf"
-        dest: "{{ pg_hba_file.files[0].path }}"
+        dest: "{{ pg_hba_file.stdout }}"
 
     - name: Installing the postgresql config file allowing scram-sha-256 hashed passwords
       template:
         src: "{{ playbook_dir }}/../../configFiles/postgres/postgresql.conf"
-        dest: "{{ postgresql_conf.files[0].path }}"
+        dest: "{{ postgresql_conf.stdout }}"
 
     - name: Restart postgresql to pickup the new config file
       ansible.builtin.service:

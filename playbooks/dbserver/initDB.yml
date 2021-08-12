@@ -11,18 +11,15 @@
       shell: 'cd /srv/{{ project_name }}; {{ project_name }}env/bin/python3 -m "scripts.initiateScrapingBackend"'
 
     - name: Locating the pg_hba.conf file
-      find:
-        paths: /
-        patterns: "pg_hba.conf"
-        recurse: yes
+      shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
       register: pg_hba_file
       become: yes
-      become_user: root
+      become_user: postgres
 
     - name: Apply custom config to postgresql config
       template:
         src: "{{ playbook_dir }}/../../configFiles/postgres/custom.conf"
-        dest: "{{ pg_hba_file.files[0].path }}"
+        dest: "{{ pg_hba_file.stdout }}"
       become: yes
       become_user: root
 
