@@ -20,18 +20,6 @@
         update_cache: yes
         upgrade: yes
 
-    - name: Install postgresql and nginx
-      package:
-        name: postgresql
-        name: nginx
-        state: latest
-
-    - name: Install firefox for doing the scraping
-      package:
-        name: firefox
-        state: latest
-
-
     - name: Install pip
       package:
         name: "{{ pip_package }}"
