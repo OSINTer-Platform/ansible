@@ -14,6 +14,14 @@
     project_name: "OSINTbackend"
     user_name: "osinter-db"
 
+- name: Install firefox for doing the scraping
+  hosts: all
+  become: yes
+  tasks:
+    - package:
+        name: firefox
+        state: latest
+
 - name: Setup postgresql
   import_playbook: "{{ playbook_dir }}/postgresql.yml"
 
