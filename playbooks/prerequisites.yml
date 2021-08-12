@@ -23,3 +23,6 @@
     - name: Install pip
       package:
         name: "{{ pip_package }}"
+
+    - name: Genereate the needed locales
+      ansible.builtin.shell: "echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen"
