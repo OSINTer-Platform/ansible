@@ -8,17 +8,6 @@
     project_path: "/srv/{{ project_name }}"
 
   tasks:
-    - name: "Make sure the {{ user_group }} group is present"
-      group:
-          name: "{{ user_group }}"
-    - name: Setup user for running the webserver
-      user:
-          name: "{{ user_name }}"
-          group: "{{ user_group }}"
-          create_home: false
-          shell: "/usr/sbin/nologin"
-          password: "{{ osinter_web_pass|password_hash('sha512') }}"
-
     - name: "Clone the {{ project_name }} from git"
       git:
           repo: "https://github.com/Combitech-DK/{{ project_name }}.git"
@@ -36,6 +25,18 @@
           repo: "https://github.com/Combitech-DK/OSINTprofiles.git"
           dest: "{{ project_path }}/OSINTprofiles"
           force: yes
+
+    - name: "Make sure the {{ user_group }} group is present"
+      group:
+          name: "{{ user_group }}"
+    - name: Setup user for running the webserver
+      user:
+          name: "{{ user_name }}"
+          group: "{{ user_group }}"
+          create_home: false
+          home: "{{ project_path }}"
+          shell: "/usr/sbin/nologin"
+          password: "{{ osinter_web_pass|password_hash('sha512') }}"
 
     - name: "Changing the owner of the {{project_path }} folder"
       file:
