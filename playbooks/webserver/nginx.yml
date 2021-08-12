@@ -8,6 +8,11 @@
     project_name: "OSINTwebserver"
 
   tasks:
+    - name: Install nginx
+      package:
+        name: nginx
+        state: latest
+
     - name: Create the needed folders
       file:
         path: "{{ item }}"
