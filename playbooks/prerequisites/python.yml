@@ -1,0 +1,17 @@
+---
+- name: Make sure python is installed
+  gather_facts: no
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Check if python is present
+      raw: test -e /usr/bin/python
+      changed_when: false
+      failed_when: false
+      register: check_python
+
+    - name: Try to install python if not present
+      raw: "pacman -S --noconfirm python3; apt install -y python3"
+      when: check_python.rc != 0
+      ignore_errors: yes

@@ -1,5 +1,9 @@
 ---
 
+
+- name: Make sure python is installed
+  import_playbook: "{{ playbook_dir }}/python.yml"
+
 - name: Installing prerequisite
   hosts: all
   become: true
