@@ -36,3 +36,12 @@
   vars:
     user_name: "osinter-db"
     project_name: "OSINTbackend"
+
+- name: Perfom scraping first time
+  hosts: all
+  tasks:
+    - name: Perform scraping
+      shell: "cd /srv/OSINTbackend && ./OSINTbackendenv/bin/python3 -m 'scripts.scrapeAndStore'"
+  become: yes
+  become_method: "sudo"
+  become_user: "osinter-db"
