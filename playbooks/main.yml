@@ -1,0 +1,10 @@
+- hosts: all
+
+- name: Setup the prerequisites
+  import_playbook: "{{ playbook_dir }}/prerequisites/main.yml"
+
+- name: Setup the webserver
+  import_playbook: "{{ playbook_dir }}/webserver/main.yml"
+
+- name: Setup the database server
+  import_playbook: "{{ playbook_dir }}/dbserver/main.yml"
