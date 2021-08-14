@@ -12,6 +12,8 @@
 
     - name: Locating the pg_hba.conf file
       shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
+      args:
+        executable: /bin/bash
       register: pg_hba_file
       become: yes
       become_user: postgres
