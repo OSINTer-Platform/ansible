@@ -11,8 +11,9 @@
         name: postgresql
         state: latest
 
-    - name: Initializing the database cluster
-      raw: initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
+    - name: Initializing the database cluster on Archlinux
+      shell: initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
+      when: ansible_distribution == "Archlinux"
       become: true
       become_user: postgres
       become_method: "sudo"
