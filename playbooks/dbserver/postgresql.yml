@@ -40,6 +40,14 @@
       become: yes
       become_user: postgres
 
+    - name: Locating the data directory
+      shell: "psql -c 'SHOW data_directory' |& grep -o '/.*postgres.*/[\\w/-]*'"
+      args:
+        executable: /bin/bash
+      register: data_directory
+      become: yes
+      become_user: postgres
+
     - name: Installing the config file trusting the postgres DB user
       template:
         src: "{{ playbook_dir }}/../../configFiles/postgres/trust.conf"
