@@ -17,8 +17,9 @@
 
     - name: Installing python dependencies for Debian/Ubuntu
       package:
-        name: "python3-pip"
-        name: "python3-venv"
+        name:
+          - "python3-pip"
+          - "python3-venv"
         state: latest
       when: ansible_distribution in ["Debian", "Ubuntu"]
 
