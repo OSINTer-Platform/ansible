@@ -1,42 +1,42 @@
-- hosts: all
-
-- name: Setup files and users for the dbserver
-  import_playbook: "{{ playbook_dir }}/../generic/setupFileAndUser.yml"
-  vars:
-    user_group: "osinter-db"
-    user_name: "osinter-db"
+- set_fact:
     project_name: "OSINTbackend"
-    user_password: ""
+    project_path: "/srv/OSINTbackend"
+    user_name: "{{ dbserver_user_name }}"
+    user_group: "{{ dbserver_user_group }}"
+    user_shell: "{{ dbserver_user_shell }}"
+    user_password: "{{ dbserver_user_password }}"
 
-- name: Setup the python enviroment for the dbserver
-  import_playbook: "{{ playbook_dir }}/../generic/pythonEnviroment.yml"
-  vars:
-    project_name: "OSINTbackend"
-    user_name: "osinter-db"
+- include_tasks: "{{ playbook_dir }}/generic/setupFileAndUser.yml"
+
+- name: Setup the python enviroment for
+  include_tasks: "{{ playbook_dir }}/generic/pythonEnviroment.yml"
+  args:
+    apply:
+      become: yes
+      become_user: "{{ user_name }}"
+      become_method: "sudo"
 
 - name: Install firefox for doing the scraping
-  import_playbook: "{{ playbook_dir }}/firefox.yml"
+  package:
+    name: "{{ firefox_package }}"
+    state: latest
 
-- name: Setup postgresql
-  import_playbook: "{{ playbook_dir }}/postgresql.yml"
+- include_tasks: "{{ playbook_dir }}/dbserver/postgresql.yml"
 
 - name: Setup own postgresql DB and apply custom configurations
-  import_playbook: "{{ playbook_dir}}/initDB.yml"
-  vars:
-    user_name: "osinter-db"
-    project_name: "OSINTbackend"
+  include_tasks: "{{ playbook_dir }}/dbserver/initDB.yml"
+  args:
+    apply:
+      become: yes
+      become_user: "{{ user_name }}"
+      become_method: "sudo"
+
 
 - name: Setup crontab for performing the scraping hourly
-  import_playbook: "{{ playbook_dir }}/cron.yml"
-  vars:
-    user_name: "osinter-db"
-    project_name: "OSINTbackend"
+  include_tasks: "{{ playbook_dir }}/dbserver/cron.yml"
 
-- name: Perfom scraping first time
-  hosts: all
-  tasks:
-    - name: Perform scraping
-      shell: "cd /srv/OSINTbackend && ./OSINTbackendenv/bin/python3 -m 'scripts.scrapeAndStore'"
+- name: Perform scraping for the first time
+  shell: "cd /srv/OSINTbackend && ./OSINTbackendenv/bin/python3 -m 'scripts.scrapeAndStore'"
   become: yes
   become_method: "sudo"
-  become_user: "osinter-db"
+  become_user: "{{ user_name }}"

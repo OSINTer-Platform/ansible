@@ -1,47 +1,37 @@
----
-- name: "Setup files and user for OSINTer service"
-  hosts: all
-  become: yes
+- name: "Clone the {{ project_name }} from git"
+  git:
+      repo: "https://github.com/Combitech-DK/{{ project_name }}.git"
+      dest: "{{ project_path }}"
+      force: yes
 
-  vars:
-    osinter_web_pass: ""
-    project_path: "/srv/{{ project_name }}"
+- name: "Clone OSINTmodules"
+  git:
+      repo: "https://github.com/Combitech-DK/OSINTmodules.git"
+      dest: "{{ project_path }}/OSINTmodules"
+      force: yes
 
-  tasks:
-    - name: "Clone the {{ project_name }} from git"
-      git:
-          repo: "https://github.com/Combitech-DK/{{ project_name }}.git"
-          dest: "{{ project_path }}"
-          force: yes
+- name: "Clone OSINTprofiles"
+  git:
+      repo: "https://github.com/Combitech-DK/OSINTprofiles.git"
+      dest: "{{ project_path }}/OSINTprofiles"
+      force: yes
 
-    - name: "Clone OSINTmodules"
-      git:
-          repo: "https://github.com/Combitech-DK/OSINTmodules.git"
-          dest: "{{ project_path }}/OSINTmodules"
-          force: yes
+- name: "Make sure the {{ user_group }} group is present"
+  group:
+      name: "{{ user_group }}"
+- name: Setup user for running the webserver
+  user:
+      name: "{{ user_name }}"
+      group: "{{ user_group }}"
+      create_home: false
+      home: "{{ project_path }}"
+      shell: "{{ user_shell }}"
+      password: "{{ user_password|password_hash('sha512') }}"
 
-    - name: "Clone OSINTprofiles"
-      git:
-          repo: "https://github.com/Combitech-DK/OSINTprofiles.git"
-          dest: "{{ project_path }}/OSINTprofiles"
-          force: yes
-
-    - name: "Make sure the {{ user_group }} group is present"
-      group:
-          name: "{{ user_group }}"
-    - name: Setup user for running the webserver
-      user:
-          name: "{{ user_name }}"
-          group: "{{ user_group }}"
-          create_home: false
-          home: "{{ project_path }}"
-          shell: "/usr/sbin/nologin"
-          password: "{{ osinter_web_pass|password_hash('sha512') }}"
-
-    - name: "Changing the owner of the {{project_path }} folder"
-      file:
-          dest: "{{ project_path }}"
-          mode: 0744
-          owner: "{{ user_name }}"
-          group: "{{ user_group }}"
-          recurse: yes
+- name: "Changing the owner of the {{ project_path }} folder"
+  file:
+      dest: "{{ project_path }}"
+      mode: 0744
+      owner: "{{ user_name }}"
+      group: "{{ user_group }}"
+      recurse: yes

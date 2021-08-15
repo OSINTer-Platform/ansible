@@ -1,44 +1,34 @@
----
-- name: Setup Nginx
-  hosts: all
-  become: yes
+- name: Install nginx
+  package:
+    name: nginx
+    state: latest
 
-  vars:
-    # Used in filepaths
-    project_name: "OSINTwebserver"
+- name: Create the needed folders
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items: ["/etc/nginx/sites-available", "/etc/nginx/sites-enabled"]
 
-  tasks:
-    - name: Install nginx
-      package:
-        name: nginx
-        state: latest
+- name: Create main nginx config file
+  template:
+    src: "{{ playbook_dir }}/../configFiles/nginx/nginx.conf"
+    dest: "/etc/nginx/nginx.conf"
 
-    - name: Create the needed folders
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: 0755
-        owner: root
-        group: root
-      with_items: ["/etc/nginx/sites-available", "/etc/nginx/sites-enabled"]
+- name: Create nginx vhost config file
+  template:
+    src: "{{ playbook_dir }}/../configFiles/nginx/{{ project_name }}Nginx.conf"
+    dest: "/etc/nginx/sites-available/{{ project_name }}.conf"
 
-    - name: Create main nginx config file
-      template:
-        src: "{{ playbook_dir }}/../../configFiles/nginx/nginx.conf"
-        dest: "/etc/nginx/nginx.conf"
+- name: Create symlinks
+  file: src=/etc/nginx/sites-available/{{ project_name }}.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf state=link
 
-    - name: Create nginx vhost config file
-      template:
-        src: "{{ playbook_dir }}/../../configFiles/nginx/{{ project_name }}Nginx.conf"
-        dest: "/etc/nginx/sites-available/{{ project_name }}.conf"
+- name: Remove default nginx vhost configuration
+  file: path=/etc/nginx/sites-enabled/default state=absent
 
-    - name: Create symlinks
-      file: src=/etc/nginx/sites-available/{{ project_name }}.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf state=link
-
-    - name: Remove default nginx vhost configuration
-      file: path=/etc/nginx/sites-enabled/default state=absent
-
-    - name: Start/restart nginx to make sure it's running and has picked up new config files
-      service:
-        name: nginx
-        state: restarted
+- name: Start/restart nginx to make sure it's running and has picked up new config files
+  service:
+    name: nginx
+    state: restarted

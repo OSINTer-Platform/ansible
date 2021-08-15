@@ -1,42 +1,23 @@
----
+- name: Installing python dependencies
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ python_dependencies }}"
 
+- name: Updating the system
+  package:
+    update_cache: yes
+    upgrade: yes
 
-- name: Make sure python is installed
-  import_playbook: "{{ playbook_dir }}/python.yml"
+- name: Install git
+  package:
+    name: git
+    state: latest
 
-- name: Installing prerequisite
-  hosts: all
-  become: true
-  tasks:
+- name: Install ACL used when becomming less priviledged user
+  package:
+    name: acl
+    state: latest
 
-    - name: Installing python dependencies for Archlinux
-      package:
-        name: "python-pip"
-        state: latest
-      when: ansible_distribution == "Archlinux"
-
-    - name: Installing python dependencies for Debian/Ubuntu
-      package:
-        name:
-          - "python3-pip"
-          - "python3-venv"
-        state: latest
-      when: ansible_distribution in ["Debian", "Ubuntu"]
-
-    - name: Updating the system
-      package:
-        update_cache: yes
-        upgrade: yes
-
-    - name: Install git
-      package:
-        name: git
-        state: latest
-
-    - name: Install ACL used when becomming less priviledged user
-      package:
-        name: acl
-        state: latest
-
-    - name: Genereate the needed locales
-      ansible.builtin.shell: "grep '^en_US\\.UTF-8 UTF-8$' /etc/locale.gen || echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; locale-gen"
+- name: Genereate the needed locales
+  ansible.builtin.shell: "grep '^en_US\\.UTF-8 UTF-8$' /etc/locale.gen || echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; locale-gen"

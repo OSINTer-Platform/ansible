@@ -1,10 +1,26 @@
-- hosts: all
+- name: Start setups
+  hosts: all
+  become: yes
+  tasks:
+    - name: Import distro variables
+      include_vars: "{{ lookup('first_found', params) }}"
+      vars:
+        params:
+          files:
+            - '{{ ansible_distribution }}.json'
+            - '{{ ansible_os_family }}.json'
+            - default.yaml
+          paths:
+            - '{{ playbook_dir }}/../vars/distributionDetails'
 
-- name: Setup the prerequisites
-  import_playbook: "{{ playbook_dir }}/prerequisites/main.yml"
+    - name: Import general purpose variables
+      include_vars: "{{ playbook_dir }}/../vars/general.json"
 
-- name: Setup the webserver
-  import_playbook: "{{ playbook_dir }}/webserver/main.yml"
+    - name: Setup the prerequisites
+      include_tasks: "{{ playbook_dir }}/prerequisites/main.yml"
 
-- name: Setup the database server
-  import_playbook: "{{ playbook_dir }}/dbserver/main.yml"
+    - name: Setup the webserver
+      include_tasks: "{{ playbook_dir }}/webserver/main.yml"
+
+    - name: Setup the database server
+      include_tasks: "{{ playbook_dir }}/dbserver/main.yml"

@@ -1,33 +1,24 @@
----
-- name: Initialize osinter DB and apply custom configurations
-  hosts: all
-  become: true
-  become_user: "{{ user_name }}"
-  become_method: "sudo"
+- name: Initialize osinter db and local enviroment using python script from OSINTbackend
+  shell: 'cd /srv/{{ project_name }}; {{ project_name }}env/bin/python3 -m "scripts.initiateScrapingBackend"'
 
-  tasks:
+- name: Locating the pg_hba.conf file
+  shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
+  args:
+    executable: /bin/bash
+  register: pg_hba_file
+  become: yes
+  become_user: postgres
 
-    - name: Initialize osinter db and local enviroment using python script from OSINTbackend
-      shell: 'cd /srv/{{ project_name }}; {{ project_name }}env/bin/python3 -m "scripts.initiateScrapingBackend"'
+- name: Apply custom config to postgresql config
+  template:
+    src: "{{ playbook_dir }}/../configFiles/postgres/custom.conf"
+    dest: "{{ pg_hba_file.stdout }}"
+  become: yes
+  become_user: root
 
-    - name: Locating the pg_hba.conf file
-      shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
-      args:
-        executable: /bin/bash
-      register: pg_hba_file
-      become: yes
-      become_user: postgres
-
-    - name: Apply custom config to postgresql config
-      template:
-        src: "{{ playbook_dir }}/../../configFiles/postgres/custom.conf"
-        dest: "{{ pg_hba_file.stdout }}"
-      become: yes
-      become_user: root
-
-    - name: Restart postgresql to pickup the new config file
-      ansible.builtin.service:
-        name: postgresql
-        state: restarted
-      become: yes
-      become_user: root
+- name: Restart postgresql to pickup the new config file
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+  become: yes
+  become_user: root

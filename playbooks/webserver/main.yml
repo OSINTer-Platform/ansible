@@ -1,26 +1,24 @@
-- hosts: all
+- set_fact:
+    project_name: "OSINTwebserver"
+    project_path: "/srv/OSINTwebserver"
+    user_name: "{{ webserver_user_name }}"
+    user_password: "{{ webserver_user_password }}"
+    user_group: "{{ webserver_user_group }}"
+    user_shell: "{{ webserver_user_shell }}"
 
 - name: Setup files and users for the webserver
-  import_playbook: "{{ playbook_dir }}/../generic/setupFileAndUser.yml"
-  vars:
-    user_group: "www-data"
-    user_name: "osinter-web"
-    project_name: "OSINTwebserver"
-    user_password: ""
+  include_tasks: "{{ playbook_dir }}/generic/setupFileAndUser.yml"
 
 - name: Setup the python enviroment for the webserver
-  import_playbook: "{{ playbook_dir }}/../generic/pythonEnviroment.yml"
-  vars:
-    project_name: "OSINTwebserver"
-    user_name: "osinter-web"
+  include_tasks: "{{ playbook_dir }}/generic/pythonEnviroment.yml"
 
 - name: Setup the service for the gunicorn instance
-  import_playbook: "{{ playbook_dir }}/gunicorn.yml"
-  vars:
-    project_name: "OSINTwebserver"
-    user_name: "osinter-web"
+  include_tasks: "{{ playbook_dir }}/webserver/gunicorn.yml"
+  args:
+    apply:
+      become: yes
+      become_user: "{{ user_name }}"
+      become_method: "sudo"
 
 - name: Finally, setting up the nginx service
-  import_playbook: "{{ playbook_dir }}/nginx.yml"
-  vars:
-    project_name: "OSINTwebserver"
+  include_tasks: "{{ playbook_dir }}/webserver/nginx.yml"

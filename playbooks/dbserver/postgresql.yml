@@ -1,64 +1,48 @@
----
-- name: Setup postgresql
-  hosts: all
+- name: Installing postgresql
+  package:
+    name: postgresql
+    state: latest
+
+- name: Initializing the database cluster on Archlinux
+  shell: "initdb --locale=en_US.UTF-8 -E UTF8 -D {{ postgresql_data_dir }}"
+  when: ansible_distribution == "Archlinux"
   become: true
+  become_user: postgres
   become_method: "sudo"
 
-  tasks:
+- name: Start and enable postgresql to generate the needed config files
+  ansible.builtin.service:
+    name: postgresql
+    enabled: yes
+    state: started
 
-    - name: Installing postgresql
-      package:
-        name: postgresql
-        state: latest
+- name: Locating the pg_hba.conf file
+  shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
+  args:
+    executable: /bin/bash
+  register: pg_hba_file
+  become: yes
+  become_user: postgres
 
-    - name: Initializing the database cluster on Archlinux
-      shell: initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
-      when: ansible_distribution == "Archlinux"
-      become: true
-      become_user: postgres
-      become_method: "sudo"
+- name: Locating the postgresql.conf file
+  shell: "psql -c 'SHOW config_file' |& grep -o '/.*/postgresql.conf'"
+  args:
+    executable: /bin/bash
+  register: postgresql_conf
+  become: yes
+  become_user: postgres
 
-    - name: Start and enable postgresql to generate the needed config files
-      ansible.builtin.service:
-        name: postgresql
-        enabled: yes
-        state: started
+- name: Installing the config file trusting the postgres DB user
+  template:
+    src: "{{ playbook_dir }}/../configFiles/postgres/trust.conf"
+    dest: "{{ pg_hba_file.stdout }}"
 
-    - name: Locating the pg_hba.conf file
-      shell: "psql -c 'SHOW hba_file' |& grep -o '/.*/pg_hba.conf'"
-      args:
-        executable: /bin/bash
-      register: pg_hba_file
-      become: yes
-      become_user: postgres
+- name: Installing the postgresql config file allowing scram-sha-256 hashed passwords
+  template:
+    src: "{{ playbook_dir }}/../configFiles/postgres/postgresql.conf"
+    dest: "{{ postgresql_conf.stdout }}"
 
-    - name: Locating the postgresql.conf file
-      shell: "psql -c 'SHOW config_file' |& grep -o '/.*/postgresql.conf'"
-      args:
-        executable: /bin/bash
-      register: postgresql_conf
-      become: yes
-      become_user: postgres
-
-    - name: Locating the data directory
-      shell: "psql -c 'SHOW data_directory' |& grep -o '/.*postgres.*/[\\w/-]*'"
-      args:
-        executable: /bin/bash
-      register: data_directory
-      become: yes
-      become_user: postgres
-
-    - name: Installing the config file trusting the postgres DB user
-      template:
-        src: "{{ playbook_dir }}/../../configFiles/postgres/trust.conf"
-        dest: "{{ pg_hba_file.stdout }}"
-
-    - name: Installing the postgresql config file allowing scram-sha-256 hashed passwords
-      template:
-        src: "{{ playbook_dir }}/../../configFiles/postgres/postgresql.conf"
-        dest: "{{ postgresql_conf.stdout }}"
-
-    - name: Restart postgresql to pickup the new config file
-      ansible.builtin.service:
-        name: postgresql
-        state: restarted
+- name: Restart postgresql to pickup the new config file
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
