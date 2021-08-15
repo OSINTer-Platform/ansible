@@ -35,3 +35,7 @@
       owner: "{{ user_name }}"
       group: "{{ user_group }}"
       recurse: yes
+- name: "Changing the permissions of the {{ project_path }} folder to 755 so the articles is world readable"
+  file:
+    dest: "{{ project_path }}"
+    mode: 0755
