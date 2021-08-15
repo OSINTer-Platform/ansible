@@ -1,0 +1,11 @@
+{
+	"dbserver_user_name"		: "osinter-db",
+	"dbserver_user_group"		: "osinter-db",
+	"dbserver_user_password"	: "",
+	"dbserver_user_shell"		: "/usr/sbin/nologin",
+	"webserver_user_name"		: "osinter-web",
+	"webserver_user_group"		: "www-data",
+	"webserver_user_password"	: "",
+	"webserver_user_shell"		: "/usr/sbin/nologin"
+
+}
