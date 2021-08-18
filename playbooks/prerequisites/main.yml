@@ -1,13 +1,13 @@
+- name: Updating the system
+  package:
+    update_cache: yes
+    upgrade: yes
+
 - name: Installing python dependencies
   package:
     name: "{{ item }}"
     state: latest
   with_items: "{{ python_dependencies }}"
-
-- name: Updating the system
-  package:
-    update_cache: yes
-    upgrade: yes
 
 - name: Install git
   package:
