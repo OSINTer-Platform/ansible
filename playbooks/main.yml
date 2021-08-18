@@ -1,7 +1,14 @@
 - name: Start setups
   hosts: all
+  gather_facts: no
   become: yes
   tasks:
+    - name: Make sure python is installed
+      include_tasks: "{{ playbook_dir }}/prerequisites/python.yml"
+
+    - name: Gather fact now that python is installed
+      setup:
+
     - name: Import distro variables
       include_vars: "{{ lookup('first_found', params) }}"
       vars:
