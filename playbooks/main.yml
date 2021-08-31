@@ -16,7 +16,7 @@
           files:
             - '{{ ansible_distribution }}.json'
             - '{{ ansible_os_family }}.json'
-            - default.yaml
+            - 'Default.json'
           paths:
             - '{{ playbook_dir }}/../vars/distributionDetails'
 
