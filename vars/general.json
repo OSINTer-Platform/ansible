@@ -6,6 +6,8 @@
 	"webserver_user_name"		: "osinter-web",
 	"webserver_user_group"		: "www-data",
 	"webserver_user_password"	: "",
-	"webserver_user_shell"		: "/usr/sbin/nologin"
+	"webserver_user_shell"		: "/usr/sbin/nologin",
+	"git_user_name"				: "bertmad3400",
+	"git_root_url"				: "github.com"
 
 }

@@ -1,18 +1,18 @@
 - name: "Clone the {{ project_name }} from git"
   git:
-      repo: "https://github.com/Combitech-DK/{{ project_name }}.git"
+      repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
       dest: "{{ project_path }}"
       force: yes
 
 - name: "Clone OSINTmodules"
   git:
-      repo: "https://github.com/Combitech-DK/OSINTmodules.git"
+      repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTmodules.git"
       dest: "{{ project_path }}/OSINTmodules"
       force: yes
 
 - name: "Clone OSINTprofiles"
   git:
-      repo: "https://github.com/Combitech-DK/OSINTprofiles.git"
+      repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTprofiles.git"
       dest: "{{ project_path }}/OSINTprofiles"
       force: yes
 
