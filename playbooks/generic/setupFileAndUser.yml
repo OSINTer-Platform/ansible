@@ -16,9 +16,10 @@
       dest: "{{ project_path }}/OSINTprofiles"
       force: yes
 
-- name: "Make sure the {{ user_group }} group is present"
+- name: "Make sure the {{ user_group }} and osinter group is present"
   group:
-      name: "{{ user_group }}"
+      name: "{{ user_group }}","osinter"
+
 - name: Setup user for running the webserver
   user:
       name: "{{ user_name }}"
