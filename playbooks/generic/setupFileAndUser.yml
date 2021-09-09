@@ -20,10 +20,10 @@
   group:
       name: "{{ user_group }}","osinter"
 
-- name: Setup user for running the webserver
+- name: "Setup user for running {{ project_name }}"
   user:
       name: "{{ user_name }}"
-      group: "{{ user_group }}"
+      group: "{{ user_group }}","osinter"
       create_home: false
       home: "{{ project_path }}"
       shell: "{{ user_shell }}"
