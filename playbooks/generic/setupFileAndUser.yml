@@ -27,6 +27,7 @@
 - name: "Setup user for running {{ project_name }}"
   user:
       name: "{{ user_name }}"
+      group: osinter
       groups: osinter,{{ user_group }}
       create_home: false
       home: "{{ project_path }}"
@@ -38,7 +39,7 @@
       dest: "{{ project_path }}"
       mode: 0744
       owner: "{{ user_name }}"
-      group: "{{ user_group }}"
+      group: "osinter"
       recurse: yes
 - name: "Changing the permissions of the {{ project_path }} folder to 755 so the articles is world readable"
   file:
