@@ -16,14 +16,18 @@
       dest: "{{ project_path }}/OSINTprofiles"
       force: yes
 
-- name: "Make sure the {{ user_group }} and osinter group is present"
+- name: "Make sure the osinter group is present"
   group:
-      name: "{{ user_group }}","osinter"
+      name: "osinter"
+
+- name: "Make sure the {{ user_group }} is present"
+  group:
+    name: "{{ user_group }}"
 
 - name: "Setup user for running {{ project_name }}"
   user:
       name: "{{ user_name }}"
-      group: "{{ user_group }}","osinter"
+      groups: osinter,{{ user_group }}
       create_home: false
       home: "{{ project_path }}"
       shell: "{{ user_shell }}"
