@@ -37,11 +37,11 @@
 - name: "Changing the owner of the {{ project_path }} folder"
   file:
       dest: "{{ project_path }}"
-      mode: 0744
+      mode: 0740
       owner: "{{ user_name }}"
       group: "osinter"
       recurse: yes
 - name: "Changing the permissions of the {{ project_path }} folder to 755 so the articles is world readable"
   file:
     dest: "{{ project_path }}"
-    mode: 0755
+    mode: 0750
