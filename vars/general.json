@@ -8,6 +8,6 @@
 	"webserver_user_password"	: "",
 	"webserver_user_shell"		: "/usr/sbin/nologin",
 	"git_user_name"				: "bertmad3400",
-	"git_root_url"				: "github.com"
-
+	"git_root_url"				: "github.com",
+	"ca_file_name"				: "ca"
 }
