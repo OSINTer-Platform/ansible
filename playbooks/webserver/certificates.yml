@@ -45,3 +45,9 @@
     ownca_path: "{{ project_path }}/ca.crt"
     ownca_privatekey_path: "{{ project_path }}/ca.key"
   when: host_supplied_ca_key.stat.exists == True and host_supplied_ca_cert.stat.exists == True
+
+- name: Deleting the CA files as they are no longer needed
+  file:
+    state: absent
+    path: "{{ project_path }}/ca.{{ item }}"
+  with_items: ["crt", "key"]
