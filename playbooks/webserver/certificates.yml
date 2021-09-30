@@ -27,7 +27,7 @@
   openssl_csr:
     path: "{{ project_path }}/OSINTerSSL.csr"
     privatekey_path: "{{ project_path }}/OSINTerSSL.key"
-    common_name: ansible_default_ipv4.address
+    common_name: "{{ ansible_default_ipv4.address }}"
 
 - name: Generating self-signed certificate
   community.crypto.x509_certificate:
