@@ -1,0 +1,30 @@
+- name: Check for user supplied CA
+  local_action: stat path={{ playbook_dir }}/../vars/CA/ca.pem
+  register: host_supplied_ca
+  become: no
+
+- name: Copying CA to remote(s)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../vars/CA/ca.pem"
+    dest: "{{ project_path }}/OSINTerSSL.ca"
+    owner: "{{ user_name }}"
+    group: "{{ user_group }}"
+    mode: 0400
+  when: host_supplied_ca.stat.exists == True
+
+- name: Generating private key
+  openssl_privatekey:
+    path: "{{ project_path }}/OSINTerSSL.key"
+    size: 4096
+
+- name: Generating CSR file
+  openssl_csr:
+    path: "{{ project_path }}/OSINTerSSL.csr"
+    privatekey_path: "{{ project_path }}/OSINTerSSL.key"
+
+- name: Generating certificate
+  community.crypto.x509_certificate:
+    provider: selfsigned
+    path: "{{ project_path }}/OSINTerSSL.crt"
+    privatekey_path: "{{ project_path }}/OSINTerSSL.key"
+    csr_path: "{{ project_path }}/OSINTerSSL.csr"

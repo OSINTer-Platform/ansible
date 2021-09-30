@@ -12,6 +12,14 @@
 - name: Setup the python enviroment for the webserver
   include_tasks: "{{ playbook_dir }}/generic/pythonEnviroment.yml"
 
+- name: Setup the needed files for TLS
+  include_tasks: "{{ playbook_dir }}/webserver/certificates.yml"
+  args:
+    apply:
+      become: yes
+      become_user: "{{ user_name }}"
+      become_method: "sudo"
+
 - name: Setup the service for the gunicorn instance
   include_tasks: "{{ playbook_dir }}/webserver/gunicorn.yml"
   args:
