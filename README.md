@@ -44,6 +44,7 @@ Currently, the only supported distributions is the latest version of the
 following distributions:
 - Debian
 - Arch
+- Ubuntu Server 20
 
 ## Using own CA for TLS certificate
 OSINTer-ansible will automatically setup certificates for use with TLS
