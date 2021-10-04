@@ -15,6 +15,7 @@
         params:
           files:
             - '{{ ansible_distribution }}-{{ ansible_distribution_version }}.json'
+            - '{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.json'
             - '{{ ansible_distribution }}.json'
             - '{{ ansible_os_family }}.json'
             - 'Default.json'
