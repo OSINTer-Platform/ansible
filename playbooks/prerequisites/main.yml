@@ -9,6 +9,21 @@
     state: latest
   with_items: "{{ python_dependencies }}"
 
+- name: Install dependencies for installing the python cryptography library where needed
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{cryptography_dependencies}}"
+  when: cryptography_dependencies is defined
+
+- name: Install python cryptography library for generating TLS certificates.
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - wheel
+    - setuptools-rust
+    - cryptography
+
 - name: Install git
   package:
     name: git
