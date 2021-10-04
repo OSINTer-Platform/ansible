@@ -3,6 +3,16 @@
     name: postgresql
     state: latest
 
+- name: Installing postgresql-server on CentOS
+  yum:
+    name: 'postgresql-server'
+    state: latest
+  when: ansible_distribution == "CentOS"
+
+- name: Initializing the database cluster on CentOS
+  shell: "postgresql-setup --initdb"
+  when: ansible_distribution == "CentOS"
+
 - name: Initializing the database cluster on Archlinux
   shell: "initdb --locale=en_US.UTF-8 -E UTF8 -D {{ postgresql_data_dir }}"
   when: ansible_distribution == "Archlinux"
