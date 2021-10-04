@@ -8,6 +8,7 @@
 - name: Restart custom service, also issue daemon-reload to pick up config changes
   systemd:
     state: restarted
+    enabled: yes
     daemon_reload: yes
     name: "{{ project_name }}.service"
   become: yes
