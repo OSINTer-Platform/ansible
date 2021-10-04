@@ -28,5 +28,8 @@
       become_user: "{{ user_name }}"
       become_method: "sudo"
 
+- name: Check for SELinux and apply the right context if present
+  include_tasks: "{{ playbook_dir }}/webserver/selinux.yml"
+
 - name: Finally, setting up the nginx service
   include_tasks: "{{ playbook_dir }}/webserver/nginx.yml"
