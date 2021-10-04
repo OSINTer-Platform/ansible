@@ -5,7 +5,7 @@
 
 - name: Start the newly installed cron daemon and enable it
   ansible.builtin.service:
-    name: "{{ cron_package }}"
+    name: "{{ cron_daemon if cron_daemon is defined else cron_package }}"
     state: started
     enabled: yes
 
