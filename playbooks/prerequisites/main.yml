@@ -34,5 +34,14 @@
     name: acl
     state: latest
 
+- name: Install locale files for generating locales
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{locale_dependencies}}"
+  when: locale_dependencies is defined
+
 - name: Genereate the needed locales
-  ansible.builtin.shell: "grep '^en_US\\.UTF-8 UTF-8$' /etc/locale.gen || echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; locale-gen"
+  ansible.builtin.shell: "localedef -v -c -i en_US -f UTF-8 en_US.UTF-8"
+  register: localedef_response
+  failed_when: localedef_response.rc != 0 and localedef_response.rc != 1
