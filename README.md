@@ -65,3 +65,22 @@ signed by an existing CA, the proccess is as follows:
   same directory
 - Now simply follow the instructions in the guick guide. The playbooks will
   automatically recognize the CA and use it for signing the certificates.
+
+### Using SELinux
+OSINTer-ansible is designed to be able to deal with systems that has SELinux
+enabled as standard (like CentOS 8), and as such, it shouldn't be a problem to
+have SELinux enabled. The functionality is still tending to the buggy side,
+however, and therefore we recommend that if OSINTer doesn't work after
+deployment using OSINTer-ansible, to try and deploy it again, but this time with
+SELinux being set temporarily to permissive. If this solves the problem, please
+contact us so that we can fix the issue.
+
+There is also a few things you should keep in mind if using OSINTer-ansible with
+SELinux:
+- It will give nginx full read-access to the whole /srv/OSINTwebserver directory
+  using the ```httpd_sys_content_t``` context.
+- It will make the socket file created by the OSINTwebserver services using
+  gunicorn in the /srv/OSINTwebserver writeable for nginx using the
+  ```httpd_var_run_t``` context.
+- It will make every file in the /srv/OSINTwebserver/OSINTwebserverenv/bin
+  executable using the ```bin_t``` context.
