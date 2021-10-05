@@ -1,0 +1,11 @@
+- name: Configure firewalld
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: "Permit traffic in default zone for {{ item }} service"
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: yes
+        state: enabled
+      with_items: ["http", "https"]

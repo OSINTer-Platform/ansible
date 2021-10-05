@@ -31,6 +31,9 @@ interfere with the following list of software if it's already installed:
   [private_key_location]```.
 - Supply the password for the [regular_user] when asked for the "BECOME
   password". This will be used for sudo priviledge escalation when needed.
+- For distributions with a firewall pre-installed (CentOS and Rocky Linux) you
+  can use the firewall.yml playbook to allow HTTP and HTTPS traffic or do this
+  manually.
 
 #### Examples:
 - Setup OSINTer on a Debian server running on 10.0.0.25 using the user mark:
@@ -38,6 +41,10 @@ interfere with the following list of software if it's already installed:
 - Setup OSINTer on two Arch servers running on 172.56.4.21 and 154.32.34.2 using
   the user emma:
   - ``` ansible-playbook -K playbooks/main.yml -u emma -i 172.56.4.21,154.32.34.2 --key-file ./id_rsa ```
+- Setup OSINTer on a Rocky Linux server running on 10.0.0.2 using the user john
+  and disable the firewall:
+  - ``` ansible-playbook -K playbooks/main.yml -u john -i 10.0.0.2, --key-file ./id_rsa ```
+  - ``` ansible-playbook -K playbooks/firewall.yml -u john -i 10.0.0.2, --key-file ./id_rsa ```
 
 ## Supported distributions:
 Currently, the only supported distributions is the latest version of the
