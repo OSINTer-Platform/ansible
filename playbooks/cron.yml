@@ -14,7 +14,7 @@
   ansible.builtin.cron:
     name: OSINTbackend scraping
     special_time: hourly
-    job: 'cd /srv/{{ project_name }} && {{ project_name }}env/bin/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log && pg_dump -U reader osinter > ./articles/database.sql'
+    job: 'cd {{ root_path }}/{{ dbserver_project_name }} && {{ dbserver_project_name }}env/bin/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log && pg_dump -U reader osinter > ./articles/database.sql'
   become: yes
-  become_user: "{{ user_name }}"
+  become_user: "{{ dbserver_user_name }}"
   become_method: "sudo"
