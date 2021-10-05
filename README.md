@@ -10,7 +10,25 @@ which has just been installed, it can also be runned against againsts host(s)
 with existing software installed. Do keep in mind that doing so will probably
 interfere with the following list of software if it's already installed:
 - Nginx
+  - It will replace the nginx config file found at /etc/nginx/nginx.conf
+	- This will make the nginx service run as the osinter-web user
+  - It will create a new site in /etc/nginx/site-available and create a symlink
+	to that in /etc/nginx/sites-enabled
+  - It will restart the service
 - PostgreSQL
+  - On non-Debian based systems, it will try to initialize a new DB cluster in
+	the default location.
+	- For Arch this is var/lib/postgres/data as defined in the Archlinux.json
+	  file and for CentOS/Rocky Linux this is /var/lib/pgsql/data as pre-defined
+	  by the OS
+  - It will replace the postgres.conf file and the pg_hba.conf file
+	  - This will keep the authenification method for the postgres user as being
+		peer-authentification
+	  - This will prevent any kind of connection to the DB using anything else
+		but the unix socket
+  - It will create a new DB and a whole range of new users described in the
+	pg_hba.conf file
+  - It will restart the service
 
 ## Quickstart
 - Install the ansible package from your repos along with python 3 and the
