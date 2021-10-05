@@ -18,3 +18,21 @@
   become: yes
   become_user: "{{ dbserver_user_name }}"
   become_method: "sudo"
+
+- name: "Setup crontab for updating {{ dbserver_project_name }}"
+  ansible.builtin.cron:
+    name: OSINTbackend scraping
+    special_time: hourly
+    job: 'cd {{ root_path }}/{{ dbserver_project_name }} && git pull origin master'
+  become: yes
+  become_user: "{{ dbserver_user_name }}"
+  become_method: "sudo"
+
+- name: "Setup crontab for updating {{ webserver_project_name }}"
+  ansible.builtin.cron:
+    name: OSINTbackend scraping
+    special_time: hourly
+    job: 'cd {{ root_path }}/{{ webserver_project_name }} && git pull origin master'
+  become: yes
+  become_user: "{{ webserver_user_name }}"
+  become_method: "sudo"
