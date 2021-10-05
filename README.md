@@ -41,10 +41,11 @@ interfere with the following list of software if it's already installed:
 
 ## Supported distributions:
 Currently, the only supported distributions is the latest version of the
-following distributions:
-- Debian
+following distributions on the x86_64 architecture:
+- Debian 11 and 10
 - Arch
 - Ubuntu Server 20
+- CentOS Linux 8
 
 ## Using own CA for TLS certificate
 OSINTer-ansible will automatically setup certificates for use with TLS
