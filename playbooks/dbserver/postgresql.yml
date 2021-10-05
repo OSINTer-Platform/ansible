@@ -3,15 +3,15 @@
     name: postgresql
     state: latest
 
-- name: Installing postgresql-server on CentOS
+- name: Installing postgresql-server on RHEL Family OS
   yum:
     name: 'postgresql-server'
     state: latest
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
 
-- name: Initializing the database cluster on CentOS
+- name: Initializing the database cluster on RHEL Family OS
   shell: "postgresql-setup --initdb"
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
 
 - name: Initializing the database cluster on Archlinux
   shell: "initdb --locale=en_US.UTF-8 -E UTF8 -D {{ postgresql_data_dir }}"

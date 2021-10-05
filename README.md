@@ -46,6 +46,7 @@ following distributions on the x86_64 architecture:
 - Arch
 - Ubuntu Server 20
 - CentOS Linux 8
+- Rocky Linux 8
 
 ## Using own CA for TLS certificate
 OSINTer-ansible will automatically setup certificates for use with TLS
