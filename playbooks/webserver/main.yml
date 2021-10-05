@@ -1,6 +1,6 @@
 - set_fact:
-    project_name: "OSINTwebserver"
-    project_path: "/srv/OSINTwebserver"
+    project_name: "{{ webserver_project_name }}"
+    project_path: "{{ root_path }}/{{ webserver_project_name }}"
     user_name: "{{ webserver_user_name }}"
     user_password: "{{ webserver_user_password }}"
     user_group: "{{ webserver_user_group }}"

@@ -1,6 +1,6 @@
 - set_fact:
-    project_name: "OSINTbackend"
-    project_path: "/srv/OSINTbackend"
+    project_name: "{{ dbserver_project_name }}"
+    project_path: "{{ root_path }}/{{ dbserver_project_name }}"
     user_name: "{{ dbserver_user_name }}"
     user_group: "{{ dbserver_user_group }}"
     user_shell: "{{ dbserver_user_shell }}"
