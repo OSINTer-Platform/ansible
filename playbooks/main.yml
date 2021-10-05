@@ -33,3 +33,6 @@
 
     - name: Setup the database server
       include_tasks: "{{ playbook_dir }}/dbserver/main.yml"
+
+    - name: Setup the needed crontabs
+      include_tasks: "{{ playbook_dir }}/cron.yml"
