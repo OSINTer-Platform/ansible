@@ -30,13 +30,3 @@
       become: yes
       become_user: "{{ user_name }}"
       become_method: "sudo"
-
-
-- name: Setup crontab for performing the scraping hourly
-  include_tasks: "{{ playbook_dir }}/dbserver/cron.yml"
-
-- name: Perform scraping for the first time
-  shell: "cd /srv/OSINTbackend && ./OSINTbackendenv/bin/python3 -m 'scripts.scrapeAndStore'"
-  become: yes
-  become_method: "sudo"
-  become_user: "{{ user_name }}"
