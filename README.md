@@ -72,6 +72,10 @@ following distributions on the x86_64 architecture:
 - Ubuntu Server 20
 - CentOS Linux 8
 - Rocky Linux 8
+We do recommend running OSINTer on Arch Linux, as this has proven to have a
+substantial perfomance increase over the other distributions during our very
+extensive testing, but we do realize that this unfortunatly isn't possible for
+everyone, and therefore we fully support the other platforms listed.
 
 ## Using own CA for TLS certificate
 OSINTer-ansible will automatically setup certificates for use with TLS
