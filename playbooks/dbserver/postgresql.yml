@@ -12,6 +12,7 @@
 - name: Initializing the database cluster on RHEL Family OS
   shell: "postgresql-setup --initdb"
   when: ansible_os_family == "RedHat"
+  ignore_errors: yes
 
 - name: Initializing the database cluster on Archlinux
   shell: "initdb --locale=en_US.UTF-8 -E UTF8 -D {{ postgresql_data_dir }}"
@@ -19,6 +20,7 @@
   become: true
   become_user: postgres
   become_method: "sudo"
+  ignore_errors: yes
 
 - name: Start and enable postgresql to generate the needed config files
   ansible.builtin.service:
