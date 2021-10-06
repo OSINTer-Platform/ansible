@@ -15,3 +15,9 @@
   command: chcon -Rv --type=bin_t "{{ project_path }}/{{ project_name }}env/bin"
   when: selinux_status.rc == 0
 
+- name: "Restart the gunicorn {{ project_name }} service to have it work with the new security context"
+  systemd:
+    state: restarted
+    name: "{{ project_name }}.service"
+  become: yes
+  become_user: root
