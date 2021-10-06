@@ -1,6 +1,6 @@
 # OSINTer
 
-![OSINTer](https://github.com/Combitech-DK/OSINTer/blob/master/logo.png)
+![OSINTer](https://github.com/bertmad3400/OSINTer/blob/master/logo.png)
 
 ## OSINTer-ansible
 OSINTer-ansible is series of ansible playbooks, which will aid in the process of
