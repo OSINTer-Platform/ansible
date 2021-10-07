@@ -1,6 +1,6 @@
 - set_fact:
-    project_name: "OSINTbackend"
-    project_path: "/srv/OSINTbackend"
+    project_name: "{{ dbserver_project_name }}"
+    project_path: "{{ root_path }}/{{ dbserver_project_name }}"
     user_name: "{{ dbserver_user_name }}"
     user_group: "{{ dbserver_user_group }}"
     user_shell: "{{ dbserver_user_shell }}"
@@ -30,13 +30,3 @@
       become: yes
       become_user: "{{ user_name }}"
       become_method: "sudo"
-
-
-- name: Setup crontab for performing the scraping hourly
-  include_tasks: "{{ playbook_dir }}/dbserver/cron.yml"
-
-- name: Perform scraping for the first time
-  shell: "cd /srv/OSINTbackend && ./OSINTbackendenv/bin/python3 -m 'scripts.scrapeAndStore'"
-  become: yes
-  become_method: "sudo"
-  become_user: "{{ user_name }}"
