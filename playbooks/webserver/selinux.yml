@@ -21,3 +21,4 @@
     name: "{{ project_name }}.service"
   become: yes
   become_user: root
+  when: selinux_status.rc == 0
