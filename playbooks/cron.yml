@@ -21,7 +21,7 @@
 
 - name: "Setup crontab for updating {{ lookup('vars', item + '_project_name') }}"
   ansible.builtin.cron:
-    name: OSINTbackend scraping
+    name: "Update {{ lookup('vars', item + '_project_name') }}"
     special_time: hourly
     job: "git -C {{ root_path }}/{{ lookup('vars', item + '_project_name') }} pull origin master"
   become: yes
