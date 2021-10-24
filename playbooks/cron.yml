@@ -23,7 +23,7 @@
   ansible.builtin.cron:
     name: "Update {{ lookup('vars', item + '_project_name') }}"
     special_time: hourly
-    job: "git -C {{ root_path }}/{{ lookup('vars', item + '_project_name') }} pull origin master"
+    job: 'for directory in "/" "/OSINTprofiles/" "/OSINTmodules"; do git -C "{{ root_path }}/{{ lookup("vars", item + "_project_name") }}$directory" pull origin master; done'
   become: yes
   become_user: "{{ lookup('vars', item + '_user_name') }}"
   become_method: "sudo"
