@@ -70,7 +70,6 @@ following distributions on the x86_64 architecture:
 - Debian 11 and 10
 - Arch
 - Ubuntu Server 20
-- CentOS Linux 8
 - Rocky Linux 8
 We do recommend running OSINTer on Arch Linux, as this has proven to have a
 substantial perfomance increase over the other distributions during our very
