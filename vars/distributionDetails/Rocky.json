@@ -5,6 +5,6 @@
 	"cron_daemon"					: "crond",
 	"postgresql_data_dir"			: "/var/lib/pgsql/data",
 	"ansible_python_interpreter"	: "/usr/bin/python3",
-	"cryptography_dependencies"		: ["redhat-rpm-config", "gcc", "libffi-devel", "python3-devel", "openssl-devel", "cargo"],
+	"cryptography_library"			: "python3-cryptography",
 	"locale_dependencies"			: ["glibc-locale-source", "glibc-langpack-en"]
 }
