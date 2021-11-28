@@ -1,11 +1,17 @@
-# OSINTer
+# OSINTansible
 
-![OSINTer](https://github.com/bertmad3400/OSINTer/blob/master/logo.png)
+[![OSINTer](https://raw.githubusercontent.com/bertmad3400/OSINTer/master/logo.png)](https://osinter.dk)
 
-## OSINTer-ansible
-OSINTer-ansible is series of ansible playbooks, which will aid in the process of
+## Welcome to OSINTer
+This repo is a part of a larger project called
+![OSINTer](https://github.com/bertmad3400/OSINTer). For more information on the
+project as a shole, you can find OSINTer at
+![https://github.com/bertmad3400/OSINTer](https://github.com/bertmad3400/OSINTer).
+
+## What is OSINTansible?
+OSINTansible is series of ansible playbooks, which will aid in the process of
 deploying the software needed for a full OSINTer installation. While
-OSINTer-ansible is designed for being runned against a host/a series of hosts
+OSINTansible is designed for being runned against a host/a series of hosts
 which has just been installed, it can also be runned against againsts host(s)
 with existing software installed. Do keep in mind that doing so will probably
 interfere with the following list of software if it's already installed:
@@ -77,26 +83,26 @@ extensive testing, but we do realize that this unfortunatly isn't possible for
 everyone, and therefore we fully support the other platforms listed.
 
 ## Using own CA for TLS certificate
-OSINTer-ansible will automatically setup certificates for use with TLS
+OSINTansible will automatically setup certificates for use with TLS
 certificates, but these will be self signed. If it is needed to have those
 signed by an existing CA, the proccess is as follows:
 - Rename a copy of the CA private key to "ca.key" and move it to the "./vars/CA"
-  directory in the OSINTer-ansible
+  directory in the OSINTansible
 - Rename a copy of a certificate signed by the CA to "ca.crt" and move it to the
   same directory
 - Now simply follow the instructions in the guick guide. The playbooks will
   automatically recognize the CA and use it for signing the certificates.
 
 ### Using SELinux
-OSINTer-ansible is designed to be able to deal with systems that has SELinux
+OSINTansible is designed to be able to deal with systems that has SELinux
 enabled as standard (like CentOS 8), and as such, it shouldn't be a problem to
 have SELinux enabled. The functionality is still tending to the buggy side,
 however, and therefore we recommend that if OSINTer doesn't work after
-deployment using OSINTer-ansible, to try and deploy it again, but this time with
+deployment using OSINTansible, to try and deploy it again, but this time with
 SELinux being set temporarily to permissive. If this solves the problem, please
 contact us so that we can fix the issue.
 
-There is also a few things you should keep in mind if using OSINTer-ansible with
+There is also a few things you should keep in mind if using OSINTansible with
 SELinux:
 - It will give nginx full read-access to the whole /srv/OSINTwebserver directory
   using the ```httpd_sys_content_t``` context.
