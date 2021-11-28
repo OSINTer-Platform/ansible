@@ -1,7 +1,6 @@
 {
-	"python_dependencies"			: "python-pip",
-	"firefox_package"				: "firefox",
-	"cron_package"					: "cronie",
-	"postgresql_data_dir"			: "/var/lib/postgres/data",
-	"ansible_python_interpreter"	: "/usr/bin/python3"
+  "python_dependencies": "python-pip",
+  "cron_package": "cronie",
+  "postgresql_data_dir": "/var/lib/postgres/data",
+  "cryptography_library": "python-cryptography"
 }
