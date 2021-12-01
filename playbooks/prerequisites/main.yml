@@ -30,6 +30,14 @@
     - wheel
     - setuptools-rust
     - cryptography
+  when: cryptography_library is not defined
+
+- name: Install python cryptography library using offical repos
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{cryptography_library}}"
+  when: cryptography_library is defined
 
 - name: Install git
   package:

@@ -1,7 +1,7 @@
 {
-	"python_dependencies"			: ["python3-pip", "python3-venv"],
-	"firefox_package"				: "firefox-esr",
-	"cron_package"					: "cron",
-	"postgresql_data_dir"			: "/var/lib/postgresql/13/main",
-	"ansible_python_interpreter"	: "/usr/bin/python3"
+  "python_dependencies": [
+    "python3-pip",
+    "python3-venv"
+  ],
+  "firefox_package": "firefox-esr"
 }

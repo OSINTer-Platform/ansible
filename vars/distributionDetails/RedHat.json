@@ -1,0 +1,13 @@
+{
+  "python_dependencies": [
+    "python3",
+    "python3-virtualenv"
+  ],
+  "cron_package": "cronie",
+  "postgresql_data_dir": "/var/lib/pgsql/data",
+  "locale_dependencies": [
+    "glibc-locale-source",
+    "glibc-langpack-en"
+  ],
+  "cron_daemon": "crond"
+}
