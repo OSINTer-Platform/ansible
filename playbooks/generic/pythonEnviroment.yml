@@ -1,13 +1,13 @@
 - name: "Create python enviroment for {{ project_name }}"
-  raw: cd "/srv/{{ project_name }}"; python3 -m venv "{{ project_name }}env"
+  raw: cd "{{ project_path }}"; python3 -m venv "{{ project_name }}env"
 
 - name: Update pip
   pip:
     name: pip
     state: latest
-    virtualenv: "/srv/{{ project_name }}/{{ project_name}}env"
+    virtualenv: "{{ project_path }}/{{ project_name}}env"
 
 - name: "Install python dependencies for {{ project_name }}"
   pip:
-    requirements: "/srv/{{ project_name }}/requirements.txt"
-    virtualenv: "/srv/{{ project_name }}/{{ project_name }}env"
+    requirements: "{{ project_path }}/requirements.txt"
+    virtualenv: "{{ project_path }}/{{ project_name }}env"
