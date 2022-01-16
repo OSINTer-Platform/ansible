@@ -1,0 +1,31 @@
+[Unit]
+Description=Elasticsearch
+Documentation=http://www.elastic.co
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment=ES_HOME={{ elastic_dir }}
+Environment=CONF_DIR={{elastic_dir}}/config/
+Environment=DATA_DIR={{elastic_dir}}/data/
+Environment=LOG_DIR={{elastic_dir}}/log/
+Environment=PID_DIR={{elastic_dir}}/
+EnvironmentFile=-/etc/sysconfig/elasticsearch
+WorkingDirectory={{elastic_dir}}
+
+User={{ elastic_user_name }}
+Group={{ elastic_user_group }}
+
+ExecStart={{elastic_dir}}/bin/elasticsearch -p ${PID_DIR}/elasticsearch.pid --quiet
+
+StandardOutput=journal
+StandardError=inherit
+LimitNOFILE=65536
+LimitMEMLOCK=infinity
+TimeoutStopSec=0
+KillSignal=SIGTERM
+SendSIGKILL=no
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target

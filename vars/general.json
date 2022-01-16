@@ -4,11 +4,20 @@
 	"dbserver_user_password"	: "",
 	"dbserver_user_shell"		: "/usr/sbin/nologin",
 	"dbserver_project_name"		: "OSINTbackend",
+
 	"webserver_user_name"		: "osinter-web",
 	"webserver_user_group"		: "www-data",
 	"webserver_user_password"	: "",
 	"webserver_user_shell"		: "/usr/sbin/nologin",
 	"webserver_project_name"	: "OSINTwebserver",
+
+	"elastic_user_name"			: "elastic",
+	"elastic_user_group"		: "elastic",
+	"elastic_user_password"		: "",
+	"elastic_user_shell"		: "/usr/sbin/nologin",
+	"elastic_dir"				: "/srv/elasticTest",
+	"elastic_install_url"		: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.3-linux-x86_64.tar.gz",
+
 	"git_user_name"				: "bertmad3400",
 	"git_root_url"				: "github.com",
 	"root_path"					: "/srv",

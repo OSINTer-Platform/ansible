@@ -1,0 +1,71 @@
+- name: "Make sure the {{ elastic_user_group }} group is present"
+  group:
+      name: "{{ elastic_user_group }}"
+
+- name: "Setup user for running Elasticsearch"
+  user:
+      name: "{{ elastic_user_name }}"
+      group: "{{ elastic_user_group }}"
+      create_home: false
+      home: "{{ elastic_dir }}"
+      shell: "{{ elastic_user_shell }}"
+      password: "{{ elastic_user_password|password_hash('sha512') }}"
+
+- name: "Create folder for holding the Elasticsearch files"
+  file:
+    path: "{{ elastic_dir }}"
+    state: directory
+    mode: 0740
+    owner: "{{ elastic_user_name }}"
+    group: "{{ elastic_user_group }}"
+
+- name: "Install tar for unarchiving Elasticsearch install files"
+  package:
+    name: "tar"
+    state: latest
+
+- name: "Download and extract Elasticsearch files"
+  unarchive:
+    src: "{{ elastic_install_url }}"
+    dest: "{{ elastic_dir }}"
+    remote_src: yes
+    mode: 0740
+    owner: "{{ elastic_user_name }}"
+    group: "{{ elastic_user_group }}"
+    list_files: yes
+  register: elastic_archive_contents
+
+- name: "Setting new path to unarchived Elasticsearch"
+  set_fact:
+    elastic_dir: "{{ elastic_archive_contents.dest }}/{{ elastic_archive_contents.files[0] }}"
+
+- name: "Create data and log directory for Elasticsearch"
+  file:
+    path: "{{ elastic_dir }}/{{ item }}"
+    state: directory
+    mode: 0740
+    owner: "{{ elastic_user_name }}"
+    group: "{{ elastic_user_group }}"
+  with_items: ["data", "logs"]
+
+- name: "Install elasticsearch config file"
+  template:
+    src: "elasticsearch.yml"
+    dest: "{{ elastic_dir }}/config/elasticsearch.yml"
+
+- name: "Change vm.max_map_count"
+  shell: "echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf && sysctl -p"
+
+- name: "Install service for running the Elasticsearch"
+  template:
+    src: "elasticsearch.service"
+    dest: "/etc/systemd/system/"
+  become: yes
+  become_user: root
+
+- name: "Restart custom service, also issue daemon-reload to pick up config changes"
+  systemd:
+    state: "restarted"
+    enabled: yes
+    daemon_reload: yes
+    name: "elasticsearch.service"
