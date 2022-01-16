@@ -2,6 +2,22 @@
   hosts: all
   gather_facts: no
   become: yes
+  pre_tasks:
+    - name: "Saving the Elasticsearch cluster url"
+      set_fact:
+        elastic_cluster_url: "{{elastic_cluster_url}}"
+
+    - name: Check if python3 is present
+      raw: test -e /usr/bin/python3
+      changed_when: false
+      failed_when: false
+      register: check_python
+
+    - name: Try to install python3 if not present
+      raw: "pacman -S --noconfirm python3; apt install -y python3; dnf -y install python3"
+      when: check_python.rc != 0
+      ignore_errors: yes
+
   tasks:
 
     - name: Gather fact now that python is installed
