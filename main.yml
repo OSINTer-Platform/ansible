@@ -25,6 +25,11 @@
     - name: Import general purpose variables
       include_vars: "vars/general.json"
 
+- hosts: all
+  become: true
+  roles:
+    - prerequisites
+
 - hosts: elasticsearch
   become: true
   roles:
