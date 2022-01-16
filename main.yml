@@ -29,3 +29,13 @@
   become: true
   roles:
     - elasticsearch
+
+- hosts: backend
+  become: true
+  roles:
+    - backend
+
+- hosts: frontend
+  become: true
+  roles:
+    - frontend
