@@ -1,0 +1,53 @@
+- name: Check for user supplied CA certificate
+  local_action: stat path={{ playbook_dir }}/../vars/CA/{{ ca_file_name }}.crt
+  register: host_supplied_ca_cert
+  become: no
+
+- name: Check for user supplied CA private key
+  local_action: stat path={{ playbook_dir }}/../vars/CA/{{ ca_file_name }}.key
+  register: host_supplied_ca_key
+  become: no
+
+- name: Copying CA to remote(s)
+  ansible.builtin.copy:
+    src: "ca.{{ item }}"
+    dest: "{{ project_path }}/ca.{{ item }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_group }}"
+    mode: 0400
+  with_items: ["crt", "key"]
+  when: host_supplied_ca_key.stat.exists == True and host_supplied_ca_cert.stat.exists == True
+
+- name: Generating private key
+  openssl_privatekey:
+    path: "{{ project_path }}/OSINTerSSL.key"
+    size: 4096
+
+- name: Generating CSR file
+  openssl_csr:
+    path: "{{ project_path }}/OSINTerSSL.csr"
+    privatekey_path: "{{ project_path }}/OSINTerSSL.key"
+    common_name: "{{ ansible_default_ipv4.address }}"
+
+- name: Generating self-signed certificate
+  community.crypto.x509_certificate:
+    provider: selfsigned
+    path: "{{ project_path }}/OSINTerSSL.crt"
+    privatekey_path: "{{ project_path }}/OSINTerSSL.key"
+    csr_path: "{{ project_path }}/OSINTerSSL.csr"
+  when: host_supplied_ca_key.stat.exists == False or host_supplied_ca_cert.stat.exists == False
+
+- name: Generating certificate signed with the CA
+  community.crypto.x509_certificate:
+    provider: ownca
+    path: "{{ project_path }}/OSINTerSSL.crt"
+    csr_path: "{{ project_path }}/OSINTerSSL.csr"
+    ownca_path: "{{ project_path }}/ca.crt"
+    ownca_privatekey_path: "{{ project_path }}/ca.key"
+  when: host_supplied_ca_key.stat.exists == True and host_supplied_ca_cert.stat.exists == True
+
+- name: Deleting the CA files as they are no longer needed
+  file:
+    state: absent
+    path: "{{ project_path }}/ca.{{ item }}"
+  with_items: ["crt", "key"]
