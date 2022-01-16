@@ -69,3 +69,7 @@
     enabled: yes
     daemon_reload: yes
     name: "elasticsearch.service"
+
+- name: "Wait for Elasticsearch to come online again"
+  wait_for:
+    port: 9200
