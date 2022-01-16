@@ -2,6 +2,13 @@
   hosts: all
   gather_facts: no
   become: yes
+  vars_prompt:
+    - name: elastic_cluster_url
+      prompt: "What is the url for your Elasticsearch cluster? (Will default to localhost on port 9200)"
+      private: no
+      default: "http://localhost:9200"
+      unsafe: yes
+
   pre_tasks:
     - name: "Saving the Elasticsearch cluster url"
       set_fact:
