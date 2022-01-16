@@ -1,0 +1,50 @@
+- name: "Clone the {{ project_name }} from git"
+  git:
+      repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
+      dest: "{{ project_path }}"
+      force: yes
+      version: testing
+
+- name: "Clone OSINTmodules"
+  git:
+      repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTmodules.git"
+      dest: "{{ project_path }}/OSINTmodules"
+      force: yes
+      version: testing
+
+- name: "Clone OSINTprofiles"
+  git:
+      repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTprofiles.git"
+      dest: "{{ project_path }}/OSINTprofiles"
+      force: yes
+      version: testing
+
+- name: "Make sure the osinter group is present"
+  group:
+      name: "osinter"
+
+- name: "Make sure the {{ user_group }} is present"
+  group:
+    name: "{{ user_group }}"
+
+- name: "Setup user for running {{ project_name }}"
+  user:
+      name: "{{ user_name }}"
+      group: osinter
+      groups: osinter,{{ user_group }}
+      create_home: false
+      home: "{{ project_path }}"
+      shell: "{{ user_shell }}"
+      password: "{{ user_password|password_hash('sha512') }}"
+
+- name: "Changing the owner of the {{ project_path }} folder"
+  file:
+      dest: "{{ project_path }}"
+      mode: 0740
+      owner: "{{ user_name }}"
+      group: "osinter"
+      recurse: yes
+- name: "Changing the permissions of the {{ project_path }} folder to 755 so the articles is world readable"
+  file:
+    dest: "{{ project_path }}"
+    mode: 0750
