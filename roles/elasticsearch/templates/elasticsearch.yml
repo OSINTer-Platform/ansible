@@ -67,6 +67,9 @@ http.port: 9200
 # Pass an initial list of hosts to perform discovery when this node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
+
+discovery.type: single-node
+
 #discovery.seed_hosts: ["host1", "host2"]
 #
 # Bootstrap the cluster using an initial set of master-eligible nodes:
@@ -94,3 +97,5 @@ http.port: 9200
 # Refer to the following documentation for instructions.
 #
 # https://www.elastic.co/guide/en/elasticsearch/reference/7.16/configuring-stack-security.html
+
+xpack.security.enabled: true

@@ -56,12 +56,24 @@
 - name: "Change vm.max_map_count"
   shell: "echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf && sysctl -p"
 
+- name: "Create Elasticsearch keystore"
+  command:
+    cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore create"
+    stdin: "y"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+
+- name: "Set password for elastic user in Elasticsearch"
+  command:
+    cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore add 'bootstrap.password'"
+    stdin: "{{ elastic_elastic_password }}"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+
 - name: "Install service for running the Elasticsearch"
   template:
     src: "elasticsearch.service"
     dest: "/etc/systemd/system/"
-  become: yes
-  become_user: root
 
 - name: "Restart custom service, also issue daemon-reload to pick up config changes"
   systemd:
@@ -73,3 +85,25 @@
 - name: "Wait for Elasticsearch to come online again"
   wait_for:
     port: 9200
+
+- name: "Create the osinter roles in Elasticsearch"
+  uri:
+    url: "{{elastic_cluster_elastic_url}}/_security/role/osinter"
+    method: POST
+    body_format: "json"
+    body:
+      indices:
+        - names:
+          - "osinter_*"
+          privileges:
+          - "all"
+
+- name: "Setup the {{ elastic_osinter_username }} user in Elasticsearch"
+  uri:
+    url: "{{elastic_cluster_elastic_url}}/_security/user/{{ elastic_osinter_username }}"
+    method: PUT
+    body_format: "json"
+    body:
+      password: "{{ elastic_osinter_password }}"
+      roles:
+        - "osinter"
