@@ -4,7 +4,6 @@
     "python3-virtualenv"
   ],
   "cron_package": "cronie",
-  "postgresql_data_dir": "/var/lib/pgsql/data",
   "locale_dependencies": [
     "glibc-locale-source",
     "glibc-langpack-en"
