@@ -18,8 +18,8 @@
 	"elastic_dir"				: "/srv/elasticTest",
 	"elastic_install_url"		: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.3-linux-x86_64.tar.gz",
 
-	"git_user_name"				: "bertmad3400",
-	"git_root_url"				: "github.com",
+	"git_user_name"				: "OSINTer",
+	"git_root_url"				: "git.bertmad.dk",
 	"root_path"					: "/srv",
 	"ca_file_name"				: "ca"
 }
