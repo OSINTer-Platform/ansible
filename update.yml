@@ -1,0 +1,45 @@
+- name: Update backend
+  hosts: backend
+  tasks:
+    - name: Import general purpose variables
+      include_vars: "vars/general.json"
+
+    - name: Update git repos
+      git:
+        dest: "{{ root_path }}/{{ dbserver_project_name }}/{{ item.dir }}"
+        repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
+        version: "elastic"
+        force: "yes"
+      loop:
+        - { "repo" : "OSINTbackend", "dir" : "" }
+        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/" }
+        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/" }
+      become: yes
+      become_user: "{{ dbserver_user_name }}"
+
+- name: Update frontend
+  hosts: frontend
+  become: yes
+  tasks:
+    - name: Import general purpose variables
+      include_vars: "vars/general.json"
+
+    - name: Update git repositories
+      git:
+        dest: "{{ root_path }}/{{ webserver_project_name }}/{{ item.dir }}"
+        repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
+        version: "elastic"
+        force: "yes"
+      loop:
+        - { "repo" : "OSINTwebserver", "dir" : "" }
+        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/" }
+        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/" }
+      become: yes
+      become_user: "{{ webserver_user_name }}"
+
+    - name: Restart the webserver
+      ansible.builtin.service:
+        name: "{{ webserver_project_name }}"
+        state: started
+        enabled: yes
+      become: yes
