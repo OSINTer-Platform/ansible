@@ -39,7 +39,7 @@
 
     - name: Restart the webserver
       ansible.builtin.service:
-        name: "{{ webserver_project_name }}"
-        state: started
+        name: "{{ webserver_project_name }}.service"
+        state: restarted
         enabled: yes
       become: yes
