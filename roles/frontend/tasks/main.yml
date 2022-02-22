@@ -24,14 +24,6 @@
       become: yes
       become_user: "{{ user_name }}"
 
-- name: Write the URL for the Elasticsearch cluster to protected file
-  copy:
-    content: "{{ elastic_cluster_osinter_url }}"
-    dest: "{{ project_path }}/.elasticsearch.url"
-    owner: "{{ user_name }}"
-    group: "{{ user_group }}"
-    mode: 0400
-
 - name: Setup the service for the gunicorn instance
   include_tasks: "gunicorn.yml"
 

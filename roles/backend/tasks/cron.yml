@@ -14,7 +14,7 @@
   ansible.builtin.cron:
     name: OSINTbackend scraping
     special_time: hourly
-    job: 'cd {{ root_path }}/{{ dbserver_project_name }} && ELASTICSEARCH_URL={{ elastic_cluster_osinter_url }} {{ dbserver_project_name }}env/bin/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log'
+    job: 'cd {{ root_path }}/{{ dbserver_project_name }} && {{ dbserver_project_name }}env/bin/python3 -m scripts.scrapeAndStore >> ./logs/scrape.log 2>> ./logs/scrapeErrors.log'
   become: yes
   become_user: "{{ dbserver_user_name }}"
   become_method: "sudo"
