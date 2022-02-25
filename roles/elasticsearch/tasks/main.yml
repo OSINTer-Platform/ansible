@@ -1,3 +1,12 @@
+- name: "Get the list of services"
+  service_facts:
+
+- name: "Stop the Elasticsearch service"
+  systemd:
+    name: "elasticsearch.service"
+    state: "stopped"
+  when: "'elasticsearch.service' in services"
+
 - name: "Make sure the {{ elastic_user_group }} group is present"
   group:
       name: "{{ elastic_user_group }}"
@@ -29,6 +38,7 @@
     src: "{{ elastic_install_url }}"
     dest: "{{ elastic_dir }}"
     remote_src: yes
+    keep_newer: yes
     mode: 0740
     owner: "{{ elastic_user_name }}"
     group: "{{ elastic_user_group }}"
@@ -48,20 +58,22 @@
     group: "{{ elastic_user_group }}"
   with_items: ["data", "logs"]
 
-- name: "Install elasticsearch config file"
-  template:
-    src: "elasticsearch.yml"
-    dest: "{{ elastic_dir }}/config/elasticsearch.yml"
-
 - name: "Change vm.max_map_count"
   shell: "echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf && sysctl -p"
 
 - name: "Create Elasticsearch keystore"
   command:
     cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore create"
-    stdin: "y"
+    stdin: "n"
   become: yes
   become_user: "{{ elastic_user_name }}"
+
+- name: "Remove existing bootstrap password"
+  command:
+    cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore remove 'bootstrap.password'"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  ignore_errors: yes
 
 - name: "Set password for elastic user in Elasticsearch"
   command:
@@ -75,7 +87,7 @@
     src: "elasticsearch.service"
     dest: "/etc/systemd/system/"
 
-- name: "Restart custom service, also issue daemon-reload to pick up config changes"
+- name: "Restart Elasticsearch service, also issue daemon-reload to pick up config changes"
   systemd:
     state: "restarted"
     enabled: yes
@@ -89,7 +101,9 @@
 - name: "Create the osinter roles in Elasticsearch"
   uri:
     url: "{{elastic_cluster_elastic_url}}/_security/role/osinter"
-    method: POST
+    method: PUT
+    force_basic_auth: yes
+    validate_certs: no
     body_format: "json"
     body:
       indices:
@@ -102,6 +116,8 @@
   uri:
     url: "{{elastic_cluster_elastic_url}}/_security/user/{{ elastic_osinter_username }}"
     method: PUT
+    force_basic_auth: yes
+    validate_certs: no
     body_format: "json"
     body:
       password: "{{ elastic_osinter_password }}"

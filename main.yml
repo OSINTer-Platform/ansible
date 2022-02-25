@@ -19,9 +19,9 @@
       unsafe: yes
 
     - name: elastic_cluster_ip
-      prompt: "Enter ip address (or domain) for your Elasticsearch cluster (defaults to 127.0.0.1)"
+      prompt: "Enter hostname for your Elasticsearch cluster (defaults to localhost)"
       private: no
-      default: "127.0.0.1"
+      default: "localhost"
 
     - name: elastic_cluster_port
       prompt: "Enter port on which your Elasticsearch cluster is exposed (defaults to 9200)"
@@ -29,9 +29,9 @@
       default: "9200"
 
     - name: elastic_cluster_prefix
-      prompt: 'Enter the prefix for the URL for your Elasticsearch cluster (defaults to "http://")'
+      prompt: 'Enter the prefix for the URL for your Elasticsearch cluster (defaults to "https://")'
       private: no
-      default: "http://"
+      default: "https://"
 
   pre_tasks:
     - name: "Saving the Elasticsearch details"

@@ -16,7 +16,7 @@
 	"elastic_user_password"		: "",
 	"elastic_user_shell"		: "/usr/sbin/nologin",
 	"elastic_dir"				: "/srv/elasticTest",
-	"elastic_install_url"		: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.3-linux-x86_64.tar.gz",
+	"elastic_install_url"		: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.0-linux-x86_64.tar.gz",
 
 	"git_user_name"				: "OSINTer",
 	"git_root_url"				: "git.bertmad.dk",

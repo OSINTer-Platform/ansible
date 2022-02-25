@@ -17,7 +17,7 @@
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTprofiles.git"
       dest: "{{ project_path }}/OSINTprofiles"
       force: yes
-      version: master
+      version: elastic
 
 - name: "Make sure the osinter group is present"
   group:
@@ -52,3 +52,13 @@
     owner: "{{ user_name }}"
     group: "{{ user_group }}"
     mode: 0400
+
+- name: "Copy the Elasticsearch HTTPS cert to {{ project_path }}"
+  copy:
+    src: "{{ elastic_dir }}/config/certs/http_ca.crt"
+    dest: "{{ project_path }}/.elasticsearch.crt"
+    remote_src: yes
+    mode: 0740
+    owner: "{{ user_name }}"
+    group: "osinter"
+  when: elastic_dir is defined
