@@ -17,6 +17,14 @@
       become: yes
       become_user: "{{ dbserver_user_name }}"
 
+    - name: Update python dependencies
+      pip:
+        requirements: "{{ root_path }}/{{ dbserver_project_name }}/requirements.txt"
+        virtualenv: "{{ root_path }}/{{ dbserver_project_name }}/{{ dbserver_project_name }}env"
+        state: latest
+      become: yes
+      become_user: "{{ dbserver_user_name }}"
+
 - name: Update frontend
   hosts: frontend
   become: yes
@@ -34,6 +42,14 @@
         - { "repo" : "OSINTwebserver", "dir" : "" }
         - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/" }
         - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/" }
+      become: yes
+      become_user: "{{ webserver_user_name }}"
+
+    - name: Update python dependencies
+      pip:
+        requirements: "{{ root_path }}/{{ webserver_project_name }}/requirements.txt"
+        virtualenv: "{{ root_path }}/{{ webserver_project_name }}/{{ webserver_project_name }}env"
+        state: latest
       become: yes
       become_user: "{{ webserver_user_name }}"
 
