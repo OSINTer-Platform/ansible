@@ -101,29 +101,3 @@
 - name: "Wait to make sure Elasticsearch is properly initialized"
   pause:
     minutes: 1
-
-- name: "Create the osinter roles in Elasticsearch"
-  uri:
-    url: "{{elastic_cluster_elastic_url}}/_security/role/osinter"
-    method: PUT
-    force_basic_auth: yes
-    validate_certs: no
-    body_format: "json"
-    body:
-      indices:
-        - names:
-          - "osinter_*"
-          privileges:
-          - "all"
-
-- name: "Setup the {{ elastic_osinter_username }} user in Elasticsearch"
-  uri:
-    url: "{{elastic_cluster_elastic_url}}/_security/user/{{ elastic_osinter_username }}"
-    method: PUT
-    force_basic_auth: yes
-    validate_certs: no
-    body_format: "json"
-    body:
-      password: "{{ elastic_osinter_password }}"
-      roles:
-        - "osinter"

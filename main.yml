@@ -81,10 +81,15 @@
   roles:
     - prerequisites
 
-- hosts: elasticsearch
+- hosts: elasticsearch_setup
   become: true
   roles:
-    - elasticsearch
+    - elasticsearch_setup
+
+- hosts: elasticsearch_config
+  become: true
+  roles:
+    - elasticsearch_config
 
 - hosts: backend
   become: true
