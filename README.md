@@ -111,3 +111,5 @@ SELinux:
   ```httpd_var_run_t``` context.
 - It will make every file in the /srv/OSINTwebserver/OSINTwebserverenv/bin
   executable using the ```bin_t``` context.
+- It will make every file in the /srv/elasticsearch/elasticsearch-*/bin
+  executable using the ```bin_t``` context.

@@ -87,6 +87,15 @@
     src: "elasticsearch.service"
     dest: "/etc/systemd/system/"
 
+- name: Check if SELinux is present and enabled
+  command: /usr/sbin/selinuxenabled
+  ignore_errors: yes
+  register: selinux_status
+
+- name: "Apply new SELinux context for custom Elasticsearch bin directory to make it executable"
+  command: chcon -Rv --type=bin_t "{{ elastic_dir }}/bin"
+  when: selinux_status.rc == 0
+
 - name: "Restart Elasticsearch service, also issue daemon-reload to pick up config changes"
   systemd:
     state: "restarted"
