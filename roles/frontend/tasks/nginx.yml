@@ -14,12 +14,12 @@
 
 - name: Create main nginx config file
   template:
-    src: "{{ playbook_dir }}/../configFiles/nginx/nginx.conf"
+    src: "nginx.conf"
     dest: "/etc/nginx/nginx.conf"
 
 - name: Create nginx vhost config file
   template:
-    src: "{{ playbook_dir }}/../configFiles/nginx/{{ project_name }}Nginx.conf"
+    src: "nginx_site.conf"
     dest: "/etc/nginx/sites-available/{{ project_name }}.conf"
 
 - name: Create symlinks

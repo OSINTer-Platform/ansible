@@ -1,0 +1,102 @@
+- name: Start setups
+  hosts: all
+  gather_facts: no
+  become: yes
+  vars_prompt:
+    - name: elastic_elastic_password
+      prompt: "Enter new password for elastic user in Elasticsearch (at least 6 characthers!)"
+      private: no
+      unsafe: yes
+
+    - name: elastic_osinter_username
+      prompt: 'Enter the username for the user that will have access to the osinter_articles index (defaults to "osinter")'
+      private: no
+      default: "osinter"
+
+    - name: elastic_osinter_password
+      prompt: "Enter password for beforementioned osinter Elasticsearch user (at least 6 characthers!)"
+      private: no
+      unsafe: yes
+
+    - name: elastic_cluster_ip
+      prompt: "Enter hostname for your Elasticsearch cluster (defaults to localhost)"
+      private: no
+      default: "localhost"
+
+    - name: elastic_cluster_port
+      prompt: "Enter port on which your Elasticsearch cluster is exposed (defaults to 9200)"
+      private: no
+      default: "9200"
+
+    - name: elastic_cluster_prefix
+      prompt: 'Enter the prefix for the URL for your Elasticsearch cluster (defaults to "https://")'
+      private: no
+      default: "https://"
+
+  pre_tasks:
+    - name: "Saving the Elasticsearch details"
+      set_fact:
+        elastic_elastic_password: "{{ elastic_elastic_password }}"
+        elastic_osinter_username: "{{ elastic_osinter_username }}"
+        elastic_osinter_password: "{{ elastic_osinter_password }}"
+        elastic_cluster_elastic_url: "{{ elastic_cluster_prefix + 'elastic:' + elastic_elastic_password + '@' + elastic_cluster_ip + ':' + elastic_cluster_port }}"
+        elastic_cluster_osinter_url: "{{ elastic_cluster_prefix + elastic_osinter_username + ':' + elastic_osinter_password + '@' + elastic_cluster_ip + ':' + elastic_cluster_port }}"
+
+    - name: Check if python3 is present
+      raw: test -e /usr/bin/python3
+      changed_when: false
+      failed_when: false
+      register: check_python
+
+    - name: Try to install python3 if not present
+      raw: "pacman -S --noconfirm python3; apt install -y python3; dnf -y install python3"
+      when: check_python.rc != 0
+      ignore_errors: yes
+
+  tasks:
+
+    - name: Gather fact now that python is installed
+      setup:
+
+    - name: Set path for distribution details
+      set_fact:
+        distDetailPath: "vars/distributionDetails/"
+
+    - name: Import distro variables
+      include_vars: "{{ item }}"
+      when: "'{{ item }}' is file"
+      loop:
+        - '{{distDetailPath}}Default.json'
+        - '{{distDetailPath}}{{ ansible_os_family }}.json'
+        - '{{distDetailPath}}{{ ansible_distribution }}.json'
+        - '{{distDetailPath}}{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.json'
+        - '{{distDetailPath}}{{ ansible_distribution }}-{{ ansible_distribution_version }}.json'
+      ignore_errors: yes
+
+    - name: Import general purpose variables
+      include_vars: "vars/general.json"
+
+- hosts: all
+  become: true
+  roles:
+    - prerequisites
+
+- hosts: elasticsearch_setup
+  become: true
+  roles:
+    - elasticsearch_setup
+
+- hosts: elasticsearch_config
+  become: true
+  roles:
+    - elasticsearch_config
+
+- hosts: backend
+  become: true
+  roles:
+    - backend
+
+- hosts: frontend
+  become: true
+  roles:
+    - frontend

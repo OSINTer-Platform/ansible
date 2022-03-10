@@ -3,21 +3,18 @@
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
       dest: "{{ project_path }}"
       force: yes
-      version: testing
 
 - name: "Clone OSINTmodules"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTmodules.git"
       dest: "{{ project_path }}/OSINTmodules"
       force: yes
-      version: testing
 
 - name: "Clone OSINTprofiles"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTprofiles.git"
       dest: "{{ project_path }}/OSINTprofiles"
       force: yes
-      version: testing
 
 - name: "Make sure the osinter group is present"
   group:
@@ -44,7 +41,21 @@
       owner: "{{ user_name }}"
       group: "osinter"
       recurse: yes
-- name: "Changing the permissions of the {{ project_path }} folder to 755 so the articles is world readable"
-  file:
-    dest: "{{ project_path }}"
-    mode: 0750
+
+- name: Write the URL for the Elasticsearch cluster to protected file
+  copy:
+    content: "{{ elastic_cluster_osinter_url }}"
+    dest: "{{ project_path }}/.elasticsearch.url"
+    owner: "{{ user_name }}"
+    group: "{{ user_group }}"
+    mode: 0400
+
+- name: "Copy the Elasticsearch HTTPS cert to {{ project_path }}"
+  copy:
+    src: "{{ elastic_dir }}/config/certs/http_ca.crt"
+    dest: "{{ project_path }}/.elasticsearch.crt"
+    remote_src: yes
+    mode: 0740
+    owner: "{{ user_name }}"
+    group: "osinter"
+  when: elastic_dir is defined

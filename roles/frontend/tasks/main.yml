@@ -7,29 +7,28 @@
     user_shell: "{{ webserver_user_shell }}"
 
 - name: Setup files and users for the webserver
-  include_tasks: "{{ playbook_dir }}/generic/setupFileAndUser.yml"
+  include_role:
+    name: setup_file_and_user
 
 - name: Setup the python enviroment for the webserver
-  include_tasks: "{{ playbook_dir }}/generic/pythonEnviroment.yml"
+  include_role:
+    name: setup_python_venv
+    apply:
+      become: yes
+      become_user: "{{ user_name }}"
 
 - name: Setup the needed files for TLS
-  include_tasks: "{{ playbook_dir }}/webserver/certificates.yml"
+  include_tasks: "certificates.yml"
   args:
     apply:
       become: yes
       become_user: "{{ user_name }}"
-      become_method: "sudo"
 
 - name: Setup the service for the gunicorn instance
-  include_tasks: "{{ playbook_dir }}/webserver/gunicorn.yml"
-  args:
-    apply:
-      become: yes
-      become_user: "{{ user_name }}"
-      become_method: "sudo"
+  include_tasks: "gunicorn.yml"
 
 - name: Check for SELinux and apply the right context if present
-  include_tasks: "{{ playbook_dir }}/webserver/selinux.yml"
+  include_tasks: "selinux.yml"
 
 - name: Finally, setting up the nginx service
-  include_tasks: "{{ playbook_dir }}/webserver/nginx.yml"
+  include_tasks: "nginx.yml"

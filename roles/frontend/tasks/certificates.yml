@@ -10,7 +10,7 @@
 
 - name: Copying CA to remote(s)
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../vars/CA/ca.{{ item }}"
+    src: "ca.{{ item }}"
     dest: "{{ project_path }}/ca.{{ item }}"
     owner: "{{ user_name }}"
     group: "{{ user_group }}"

@@ -1,4 +1,0 @@
-{
-  "firefox_package": "firefox",
-  "postgresql_data_dir": "/var/lib/postgresql/12/main"
-}
