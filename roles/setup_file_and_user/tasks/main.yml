@@ -3,21 +3,18 @@
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
       dest: "{{ project_path }}"
       force: yes
-      version: elastic
 
 - name: "Clone OSINTmodules"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTmodules.git"
       dest: "{{ project_path }}/OSINTmodules"
       force: yes
-      version: elastic
 
 - name: "Clone OSINTprofiles"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/OSINTprofiles.git"
       dest: "{{ project_path }}/OSINTprofiles"
       force: yes
-      version: elastic
 
 - name: "Make sure the osinter group is present"
   group:

@@ -1,0 +1,11 @@
+[elasticsearch_setup]
+{ip}
+
+[elasticsearch_config]
+{ip}
+
+[frontend]
+{ip}
+
+[backend]
+{ip}
