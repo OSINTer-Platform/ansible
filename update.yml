@@ -8,7 +8,6 @@
       git:
         dest: "{{ root_path }}/{{ dbserver_project_name }}/{{ item.dir }}"
         repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
-        version: "elastic"
         force: "yes"
       loop:
         - { "repo" : "OSINTbackend", "dir" : "" }
@@ -36,7 +35,6 @@
       git:
         dest: "{{ root_path }}/{{ webserver_project_name }}/{{ item.dir }}"
         repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
-        version: "elastic"
         force: "yes"
       loop:
         - { "repo" : "OSINTwebserver", "dir" : "" }
