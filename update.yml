@@ -9,10 +9,11 @@
         dest: "{{ root_path }}/{{ dbserver_project_name }}/{{ item.dir }}"
         repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
         force: "yes"
+        version: "{{ item.branch }}"
       loop:
-        - { "repo" : "OSINTbackend", "dir" : "" }
-        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/" }
-        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/" }
+        - { "repo" : "OSINTbackend", "dir" : "", "branch" : "master" }
+        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/", "branch" : "master" }
+        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/", "branch" : "master" }
       become: yes
       become_user: "{{ dbserver_user_name }}"
 
@@ -36,10 +37,11 @@
         dest: "{{ root_path }}/{{ webserver_project_name }}/{{ item.dir }}"
         repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
         force: "yes"
+        version: "{{ item.branch }}"
       loop:
-        - { "repo" : "OSINTwebserver", "dir" : "" }
-        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/" }
-        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/" }
+        - { "repo" : "OSINTwebserver", "dir" : "", "branch" : "master" }
+        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/", "branch" : "master" }
+        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/", "branch" : "master" }
       become: yes
       become_user: "{{ webserver_user_name }}"
 
