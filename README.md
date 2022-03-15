@@ -1,4 +1,5 @@
 # OSINTansible
+*Unfortuantely, the recent updates to OSINTer has made this readme outdated. While work is being done to update it, it is not of any use as of writting this.*
 
 [![OSINTer](https://raw.githubusercontent.com/bertmad3400/OSINTer/master/logo.png)](https://osinter.dk)
 
