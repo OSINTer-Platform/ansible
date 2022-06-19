@@ -1,6 +1,6 @@
 - name: Install service for running the webserver
   template:
-    src: "OSINTwebserver.service"
+    src: "OSINTapi.service"
     dest: "/etc/systemd/system/"
     mode: 0640
     owner: root
@@ -11,4 +11,4 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
-    name: "OSINTwebserver.service"
+    name: "OSINTapi.service"

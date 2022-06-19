@@ -3,13 +3,13 @@
 	"dbserver_user_group"		: "osinter-db",
 	"dbserver_user_password"	: "",
 	"dbserver_user_shell"		: "/usr/sbin/nologin",
-	"dbserver_project_name"		: "OSINTbackend",
+	"dbserver_project_name"		: "backend",
 
-	"webserver_user_name"		: "osinter-web",
+	"webserver_user_name"		: "osinter-api",
 	"webserver_user_group"		: "www-data",
 	"webserver_user_password"	: "",
 	"webserver_user_shell"		: "/usr/sbin/nologin",
-	"webserver_project_name"	: "OSINTwebserver",
+	"webserver_project_name"	: "api",
 
 	"elastic_user_name"			: "elastic",
 	"elastic_user_group"		: "elastic",
