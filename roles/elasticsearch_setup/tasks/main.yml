@@ -1,3 +1,7 @@
+- name: "Setting new root path for Elasticsearch"
+  set_fact:
+    elastic_dir: "{{ elastic_dir.split('/')[:-1]|join('/')}}"
+
 - name: "Get the list of services"
   service_facts:
 
