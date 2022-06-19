@@ -23,7 +23,7 @@
     state: latest
 
 - name: Initialize elasticsearch index and local enviroment using python script from OSINTbackend
-  shell: 'cd /srv/{{ project_name }} && {{ project_name }}env/bin/python3 -m "scripts.initiateScrapingBackend"'
+  shell: 'cd {{ root_path }}/{{ project_name }} && {{ project_name }}env/bin/python3 -m "scripts.initiateScrapingBackend"'
   become: yes
   become_user: "{{ user_name }}"
 

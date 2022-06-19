@@ -20,6 +20,6 @@
 
 	"git_user_name"				: "OSINTer",
 	"git_root_url"				: "git.bertmad.dk",
-	"root_path"					: "/srv",
+	"root_path"					: "/srv/osinter",
 	"ca_file_name"				: "ca"
 }
