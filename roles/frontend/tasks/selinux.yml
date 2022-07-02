@@ -18,7 +18,7 @@
 - name: "Restart the gunicorn {{ project_name }} service to have it work with the new security context"
   systemd:
     state: restarted
-    name: "{{ project_name }}.service"
+    name: "OSINT{{ project_name }}.service"
   become: yes
   become_user: root
   when: selinux_status.rc == 0
