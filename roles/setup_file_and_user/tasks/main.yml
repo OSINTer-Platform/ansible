@@ -1,28 +1,20 @@
-- name: "Check if {{ project_name }} files has already been cloned"
-  stat:
-    path: "{{ project_path }}"
-  register: project_dir
-
 - name: "Clone the {{ project_name }} from git"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
       dest: "{{ project_path }}"
       force: yes
-  when: (project_dir.stat.isdir is undefined) or (not project_dir.stat.isdir)
 
 - name: "Clone modules"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/modules.git"
       dest: "{{ project_path }}/modules"
       force: yes
-  when: (project_dir.stat.isdir is undefined) or (not project_dir.stat.isdir)
 
 - name: "Clone profiles"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/profiles.git"
       dest: "{{ project_path }}/profiles"
       force: yes
-  when: (project_dir.stat.isdir is undefined) or (not project_dir.stat.isdir)
 
 - name: "Make sure the osinter group is present"
   group:
