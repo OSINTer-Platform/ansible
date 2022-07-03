@@ -18,6 +18,14 @@
   become: yes
   become_user: "{{ user_name }}"
 
+- name: Clone files for blog too
+  git:
+    repo: "https://{{ git_root_url }}/{{ git_user_name }}/blog.git"
+    dest: "{{ project_path }}/blog"
+    force: yes
+  become: yes
+  become_user: "{{ user_name }}"
+
 - name: Setup the python enviroment for the webserver
   include_role:
     name: setup_python_venv
