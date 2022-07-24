@@ -11,9 +11,9 @@
         force: "yes"
         version: "{{ item.branch }}"
       loop:
-        - { "repo" : "OSINTbackend", "dir" : "", "branch" : "master" }
-        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/", "branch" : "master" }
-        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/", "branch" : "master" }
+        - { "repo" : "backend", "dir" : "", "branch" : "master" }
+        - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
+        - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
       become: yes
       become_user: "{{ dbserver_user_name }}"
 
@@ -39,9 +39,10 @@
         force: "yes"
         version: "{{ item.branch }}"
       loop:
-        - { "repo" : "OSINTwebserver", "dir" : "", "branch" : "master" }
-        - { "repo" : "OSINTmodules", "dir" : "OSINTmodules/", "branch" : "master" }
-        - { "repo" : "OSINTprofiles", "dir" : "OSINTprofiles/", "branch" : "master" }
+        - { "repo" : "api", "dir" : "", "branch" : "master" }
+        - { "repo" : "webfrontend", "dir" : "webfrontend/", "branch" : "master" }
+        - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
+        - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
       become: yes
       become_user: "{{ webserver_user_name }}"
 
@@ -55,7 +56,7 @@
 
     - name: Restart the webserver
       ansible.builtin.service:
-        name: "{{ webserver_project_name }}.service"
+        name: "OSINT{{ webserver_project_name }}.service"
         state: restarted
         enabled: yes
       become: yes
