@@ -1,0 +1,20 @@
+- name: Update git repos
+  git:
+    dest: "{{ root_path }}/{{ project_name }}/{{ item.dir }}"
+    repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
+    force: "yes"
+    version: "{{ item.branch }}"
+  loop:
+    - { "repo" : "backend", "dir" : "", "branch" : "master" }
+    - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
+    - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
+  become: yes
+  become_user: "{{ user_name }}"
+
+- name: Update python dependencies
+  pip:
+    requirements: "{{ root_path }}/{{ project_name }}/requirements.txt"
+    virtualenv: "{{ root_path }}/{{ project_name }}/{{ project_name }}env"
+    state: latest
+  become: yes
+  become_user: "{{ user_name }}"

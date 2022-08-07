@@ -4,26 +4,12 @@
     - name: Import general purpose variables
       include_vars: "vars/general.json"
 
-    - name: Update git repos
-      git:
-        dest: "{{ root_path }}/{{ dbserver_project_name }}/{{ item.dir }}"
-        repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
-        force: "yes"
-        version: "{{ item.branch }}"
-      loop:
-        - { "repo" : "backend", "dir" : "", "branch" : "master" }
-        - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
-        - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
-      become: yes
-      become_user: "{{ dbserver_user_name }}"
-
-    - name: Update python dependencies
-      pip:
-        requirements: "{{ root_path }}/{{ dbserver_project_name }}/requirements.txt"
-        virtualenv: "{{ root_path }}/{{ dbserver_project_name }}/{{ dbserver_project_name }}env"
-        state: latest
-      become: yes
-      become_user: "{{ dbserver_user_name }}"
+    - name: Update backend
+      include_role:
+        name: update
+      vars:
+        project_name: "{{ dbserver_project_name }}"
+        user_name: "{{ dbserver_user_name }}"
 
 - name: Update frontend
   hosts: frontend
@@ -32,27 +18,24 @@
     - name: Import general purpose variables
       include_vars: "vars/general.json"
 
-    - name: Update git repositories
-      git:
-        dest: "{{ root_path }}/{{ webserver_project_name }}/{{ item.dir }}"
-        repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
-        force: "yes"
-        version: "{{ item.branch }}"
-      loop:
-        - { "repo" : "api", "dir" : "", "branch" : "master" }
-        - { "repo" : "webfrontend", "dir" : "webfrontend/", "branch" : "master" }
-        - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
-        - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
-      become: yes
-      become_user: "{{ webserver_user_name }}"
+    - name: Import general purpose variables
+      include_vars: "vars/general.json"
 
-    - name: Update python dependencies
-      pip:
-        requirements: "{{ root_path }}/{{ webserver_project_name }}/requirements.txt"
-        virtualenv: "{{ root_path }}/{{ webserver_project_name }}/{{ webserver_project_name }}env"
-        state: latest
-      become: yes
-      become_user: "{{ webserver_user_name }}"
+    - name: Update API
+      include_role:
+        name: update
+      vars:
+        project_name: "{{ dbserver_project_name }}"
+        user_name: "{{ dbserver_user_name }}"
+
+    - name: Update static frontend files
+      include_role:
+        name: setup_static_from_release
+      vars:
+        static_project_name: "webfrontend"
+        project_path: "{{ root_path }}/{{ webserver_project_name }}"
+        user_name: "{{ webserver_user_name }}"
+        user_group: "{{ webserver_user_group }}"
 
     - name: Restart the webserver
       ansible.builtin.service:
