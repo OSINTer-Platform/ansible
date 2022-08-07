@@ -2,6 +2,7 @@
   ansible.builtin.get_url:
     url: "https://{{ git_root_url }}/{{ git_user_name }}/{{ static_project_name }}/-/releases/permalink/latest/downloads/build/build.tar.gz"
     dest: "/tmp/build.tar.gz"
+    force: yes
 
 - name: Create folder for hosting static files
   ansible.builtin.file:
@@ -15,6 +16,7 @@
   ansible.builtin.unarchive:
     src: "/tmp/build.tar.gz"
     dest: "{{ project_path }}/{{ static_project_name }}"
+    remote_src: yes
     mode: '0555'
     owner: "{{ user_name }}"
     group: "{{ user_group }}"
