@@ -44,6 +44,12 @@
     name: git
     state: latest
 
+- name: Install tar for unarchiving files
+  package:
+    name: "tar"
+    state: latest
+
+
 - name: Install ACL used when becomming less priviledged user
   package:
     name: acl

@@ -32,11 +32,6 @@
     owner: "{{ elastic_user_name }}"
     group: "{{ elastic_user_group }}"
 
-- name: "Install tar for unarchiving Elasticsearch install files"
-  package:
-    name: "tar"
-    state: latest
-
 - name: "Download and extract Elasticsearch files"
   unarchive:
     src: "{{ elastic_install_url }}"
