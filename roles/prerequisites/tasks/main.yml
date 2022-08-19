@@ -66,3 +66,16 @@
   ansible.builtin.shell: "localedef -v -c -i en_US -f UTF-8 en_US.UTF-8"
   register: localedef_response
   failed_when: localedef_response.rc != 0 and localedef_response.rc != 1
+
+
+- name: Make sure the osinter group is present
+  group:
+      name: "osinter"
+
+- name: Create root OSINTer directory
+  file:
+    path: "{{ root_path }}"
+    state: directory
+    mode: 0775
+    owner: "root"
+    group: "osinter"

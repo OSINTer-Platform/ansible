@@ -16,9 +16,6 @@
       dest: "{{ project_path }}/profiles"
       force: yes
 
-- name: "Make sure the osinter group is present"
-  group:
-      name: "osinter"
 
 - name: "Make sure the {{ user_group }} is present"
   group:
