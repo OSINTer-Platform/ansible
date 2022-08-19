@@ -49,7 +49,7 @@
       register: check_python
 
     - name: Try to install python3 if not present
-      raw: "pacman -S --noconfirm python3; apt install -y python3; dnf -y install python3"
+      raw: "pacman -Sy --noconfirm python3; apt update; apt install -y python3; dnf -y install python3"
       when: check_python.rc != 0
       ignore_errors: yes
 
