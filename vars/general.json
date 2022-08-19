@@ -15,7 +15,9 @@
 	"elastic_user_group"		: "elastic",
 	"elastic_user_password"		: "",
 	"elastic_user_shell"		: "/usr/sbin/nologin",
-	"elastic_dir"				: "/srv/elasticsearch/elasticsearch-8.0.0",
+
+	"elastic_root_path"			: "elasticsearch",
+	"elastic_current_version"	: "elasticsearch-8.0.0",
 	"elastic_install_url"		: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.0-linux-x86_64.tar.gz",
 
 	"git_user_name"				: "osinter",

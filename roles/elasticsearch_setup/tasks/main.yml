@@ -1,6 +1,6 @@
 - name: "Setting new root path for Elasticsearch"
   set_fact:
-    elastic_dir: "{{ elastic_dir.split('/')[:-1]|join('/')}}"
+    elastic_dir: "{{ root_path }}/{{ elastic_root_path }}"
 
 - name: "Get the list of services"
   service_facts:
@@ -44,47 +44,27 @@
     list_files: yes
   register: elastic_archive_contents
 
-- name: "Setting new path to unarchived Elasticsearch"
+- name: "Setting new root path for Elasticsearch"
   set_fact:
-    elastic_dir: "{{ elastic_archive_contents.dest }}/{{ elastic_archive_contents.files[0] }}"
+    current_elastic_dir: "{{ elastic_dir }}/{{ elastic_current_version }}"
 
-- name: "Create data and log directory for Elasticsearch"
-  file:
-    path: "{{ elastic_dir }}/{{ item }}"
-    state: directory
-    mode: 0740
-    owner: "{{ elastic_user_name }}"
-    group: "{{ elastic_user_group }}"
-  with_items: ["data", "logs"]
+- name: "Rename elasticsearch folder to \"{{ elastic_current_version }}\""
+  command: "mv -f {{ elastic_archive_contents.dest }}/{{ elastic_archive_contents.files[0] }} {{ current_elastic_dir }}"
+  args:
+    removes: "{{ elastic_archive_contents.dest }}/{{ elastic_archive_contents.files[0] }}"
+    creates: "{{ current_elastic_dir }}"
 
-- name: "Change vm.max_map_count"
-  shell: "echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf && sysctl -p"
-
-- name: "Create Elasticsearch keystore"
-  command:
-    cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore create"
-    stdin: "n"
-  become: yes
-  become_user: "{{ elastic_user_name }}"
-
-- name: "Remove existing bootstrap password"
-  command:
-    cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore remove 'bootstrap.password'"
-  become: yes
-  become_user: "{{ elastic_user_name }}"
-  ignore_errors: yes
-
-- name: "Set password for elastic user in Elasticsearch"
-  command:
-    cmd: "{{ elastic_dir }}/bin/elasticsearch-keystore add 'bootstrap.password'"
-    stdin: "{{ elastic_elastic_password }}"
-  become: yes
-  become_user: "{{ elastic_user_name }}"
-
-- name: "Install service for running the Elasticsearch"
+- name: "Install config file for elasticsearch"
   template:
-    src: "elasticsearch.service"
-    dest: "/etc/systemd/system/"
+    src: "elasticsearch.yml"
+    dest: "{{ current_elastic_dir }}/config/"
+    force: yes
+
+- name: "Move config directory to elasticsearch root"
+  command: "mv -f {{ current_elastic_dir }}/config {{ elastic_dir }}/config"
+  args:
+    removes: "{{ current_elastic_dir }}/config"
+    creates: "{{ elastic_dir }}/config"
 
 - name: Check if SELinux is present and enabled
   command: /usr/sbin/selinuxenabled
@@ -92,8 +72,45 @@
   register: selinux_status
 
 - name: "Apply new SELinux context for custom Elasticsearch bin directory to make it executable"
-  command: chcon -Rv --type=bin_t "{{ elastic_dir }}/bin"
+  command: chcon -Rv --type=bin_t "{{ current_elastic_dir }}/bin"
   when: selinux_status.rc == 0
+
+
+- name: "Change vm.max_map_count"
+  shell: "echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf && sysctl -p"
+
+- name: "Create Elasticsearch keystore"
+  command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore create"
+    stdin: "n"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  environment:
+    ES_PATH_CONF: "{{ elastic_dir }}/config/"
+
+- name: "Remove existing bootstrap password"
+  command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore remove 'bootstrap.password'"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  ignore_errors: yes
+  environment:
+    ES_PATH_CONF: '{{ elastic_dir }}/config/'
+
+- name: "Set password for elastic user in Elasticsearch"
+  command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore add 'bootstrap.password'"
+    stdin: "{{ elastic_elastic_password }}"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  environment:
+    ES_PATH_CONF: '{{ elastic_dir }}/config/'
+
+- name: "Install service for running the Elasticsearch"
+  template:
+    src: "elasticsearch.service"
+    dest: "/etc/systemd/system/"
+    force: yes
 
 - name: "Restart Elasticsearch service, also issue daemon-reload to pick up config changes"
   systemd:

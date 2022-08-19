@@ -30,11 +30,11 @@
 #
 # Path to directory where to store the data (separate multiple locations by comma):
 #
-path.data: {{ elastic_dir }}/data
+path.data: {{elastic_dir}}/data/
 #
 # Path to log files:
 #
-path.logs: {{ elastic_dir }}/logs
+path.logs: {{elastic_dir}}/logs/
 #
 # ----------------------------------- Memory -----------------------------------
 #
@@ -53,12 +53,12 @@ path.logs: {{ elastic_dir }}/logs
 # By default Elasticsearch is only accessible on localhost. Set a different
 # address here to expose this node on the network:
 #
-network.host: 127.0.0.1
+#network.host: 192.168.0.1
 #
 # By default Elasticsearch listens for HTTP traffic on the first free port it
 # finds starting at 9200. Set a specific HTTP port here:
 #
-http.port: 9200
+#http.port: 9200
 #
 # For more information, consult the network module documentation.
 #
@@ -67,35 +67,16 @@ http.port: 9200
 # Pass an initial list of hosts to perform discovery when this node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-
-discovery.type: single-node
-
-#discovery.seed_hosts: ["host1", "host2"]
+#discovery.seed_hosts: []
 #
 # Bootstrap the cluster using an initial set of master-eligible nodes:
 #
-#cluster.initial_master_nodes: ["node-1", "node-2"]
+#cluster.initial_master_nodes: []
 #
 # For more information, consult the discovery and cluster formation module documentation.
 #
 # ---------------------------------- Various -----------------------------------
 #
-# Require explicit names when deleting indices:
+# Allow wildcard deletion of indices:
 #
-#action.destructive_requires_name: true
-#
-# ---------------------------------- Security ----------------------------------
-#
-#                                 *** WARNING ***
-#
-# Elasticsearch security features are not enabled by default.
-# These features are free, but require configuration changes to enable them.
-# This means that users don’t have to provide credentials and can get full access
-# to the cluster. Network connections are also not encrypted.
-#
-# To protect your data, we strongly encourage you to enable the Elasticsearch security features. 
-# Refer to the following documentation for instructions.
-#
-# https://www.elastic.co/guide/en/elasticsearch/reference/7.16/configuring-stack-security.html
-
-xpack.security.enabled: true
+#action.destructive_requires_name: false

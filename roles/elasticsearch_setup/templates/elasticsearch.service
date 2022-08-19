@@ -5,18 +5,14 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-Environment=ES_HOME={{ elastic_dir }}
-Environment=CONF_DIR={{elastic_dir}}/config/
-Environment=DATA_DIR={{elastic_dir}}/data/
-Environment=LOG_DIR={{elastic_dir}}/log/
-Environment=PID_DIR={{elastic_dir}}/
-EnvironmentFile=-/etc/sysconfig/elasticsearch
-WorkingDirectory={{elastic_dir}}
+Environment=ES_PATH_CONF={{elastic_dir}}/config/
+Environment=ES_PID_DIR={{current_elastic_dir}}
+WorkingDirectory={{current_elastic_dir}}
 
 User={{ elastic_user_name }}
 Group={{ elastic_user_group }}
 
-ExecStart={{elastic_dir}}/bin/elasticsearch -p ${PID_DIR}/elasticsearch.pid --quiet
+ExecStart={{current_elastic_dir}}/bin/elasticsearch -p ${ES_PID_DIR}/elasticsearch.pid --quiet
 
 StandardOutput=journal
 StandardError=inherit
