@@ -2,20 +2,19 @@
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
       dest: "{{ project_path }}"
-      force: yes
+      update: no
 
 - name: "Clone modules"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/modules.git"
       dest: "{{ project_path }}/modules"
-      force: yes
+      update: no
 
 - name: "Clone profiles"
   git:
       repo: "https://{{ git_root_url }}/{{ git_user_name }}/profiles.git"
       dest: "{{ project_path }}/profiles"
-      force: yes
-
+      update: no
 
 - name: "Make sure the {{ user_group }} is present"
   group:
