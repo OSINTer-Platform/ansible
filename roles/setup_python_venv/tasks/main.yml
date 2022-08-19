@@ -1,5 +1,7 @@
 - name: "Create python enviroment for {{ project_name }}"
-  raw: cd "{{ project_path }}"; python3 -m venv "{{ project_name }}env"
+  shell: python3 -m venv "{{ project_name }}env"
+  args:
+    chdir: "{{ project_path }}"
 
 - name: Update pip
   pip:
