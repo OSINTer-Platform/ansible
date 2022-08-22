@@ -5,7 +5,7 @@
     force: "yes"
     version: "{{ item.branch }}"
   loop:
-    - { "repo" : "backend", "dir" : "", "branch" : "master" }
+    - { "repo" : "{{ project_name }}", "dir" : "", "branch" : "master" }
     - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
     - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
   become: yes

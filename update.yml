@@ -25,8 +25,8 @@
       include_role:
         name: update
       vars:
-        project_name: "{{ dbserver_project_name }}"
-        user_name: "{{ dbserver_user_name }}"
+        project_name: "{{ webserver_project_name }}"
+        user_name: "{{ webserver_user_name }}"
 
     - name: Update static frontend files
       include_role:
