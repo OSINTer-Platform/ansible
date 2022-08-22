@@ -1,3 +1,35 @@
+- name: "Setting new root path for Elasticsearch"
+  set_fact:
+    elastic_dir: "{{ root_path }}/{{ elastic_root_path }}"
+    current_elastic_dir: "{{ root_path }}/{{ elastic_root_path }}/{{ elastic_current_version }}"
+
+- name: "Create Elasticsearch keystore"
+  command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore create"
+    stdin: "n"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  environment:
+    ES_PATH_CONF: "{{ elastic_dir }}/config/"
+
+- name: "Remove existing bootstrap password"
+  command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore remove 'bootstrap.password'"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  ignore_errors: yes
+  environment:
+    ES_PATH_CONF: '{{ elastic_dir }}/config/'
+
+- name: "Set password for elastic user in Elasticsearch"
+  command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore add 'bootstrap.password'"
+    stdin: "{{ elastic_elastic_password }}"
+  become: yes
+  become_user: "{{ elastic_user_name }}"
+  environment:
+    ES_PATH_CONF: '{{ elastic_dir }}/config/'
+
 - name: "Create the osinter roles in Elasticsearch"
   uri:
     url: "{{elastic_cluster_elastic_url}}/_security/role/osinter"
