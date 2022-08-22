@@ -1,3 +1,21 @@
+- name: Update elasticsearch
+  hosts: elasticsearch_setup:elasticsearch_config
+  become: true
+  tasks:
+    - name: Import general purpose variables
+      include_vars: "vars/general.json"
+
+    - name: Check if the current elasticsearch version is up to date
+      stat:
+        path: "{{ root_path }}/{{ elastic_root_path }}/{{ elastic_current_version }}"
+      register: elastic_exists
+
+    - name: Update Elasticsearch version
+      include_role:
+        name: elasticsearch_setup
+      when: not elastic_exists.stat.exists
+
+
 - name: Update backend
   hosts: backend
   tasks:
