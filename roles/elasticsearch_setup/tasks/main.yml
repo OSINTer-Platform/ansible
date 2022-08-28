@@ -81,18 +81,3 @@
     src: "elasticsearch.service"
     dest: "/etc/systemd/system/"
     force: yes
-
-- name: "Restart Elasticsearch service, also issue daemon-reload to pick up config changes"
-  systemd:
-    state: "restarted"
-    enabled: yes
-    daemon_reload: yes
-    name: "elasticsearch.service"
-
-- name: "Wait for Elasticsearch to come online again"
-  wait_for:
-    port: 9200
-
-- name: "Wait to make sure Elasticsearch is properly initialized"
-  pause:
-    minutes: 1
