@@ -16,6 +16,9 @@
     state: latest
   with_items: "{{ python_dependencies }}"
 
+- name: Ensure pip is present
+  command: python3 -m ensurepip
+
 - name: Install dependencies for installing the python cryptography library where needed
   package:
     name: "{{ item }}"
