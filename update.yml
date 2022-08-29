@@ -46,14 +46,17 @@
         project_name: "{{ webserver_project_name }}"
         user_name: "{{ webserver_user_name }}"
 
-    - name: Update static frontend files
+    - name: "Update static frontend files for the webfrontend and blog"
       include_role:
         name: setup_static_from_release
       vars:
-        static_project_name: "webfrontend"
+        static_project_name: "{{ item }}"
         project_path: "{{ root_path }}/{{ webserver_project_name }}"
         user_name: "{{ webserver_user_name }}"
         user_group: "{{ webserver_user_group }}"
+      loop:
+        - "webfrontend"
+        - "blog"
 
     - name: Restart the webserver
       ansible.builtin.service:
