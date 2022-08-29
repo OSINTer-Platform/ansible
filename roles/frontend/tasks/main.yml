@@ -10,11 +10,14 @@
   include_role:
     name: setup_file_and_user
 
-- name: Install static files for frontend
+- name: "Install static files for {{ item }}"
   include_role:
     name: setup_static_from_release
   vars:
-    static_project_name: "webfrontend"
+    static_project_name: "{{ item }}"
+  with_items:
+    - "webfrontend"
+    - "blog"
 
 
 - name: Setup the python enviroment for the webserver
