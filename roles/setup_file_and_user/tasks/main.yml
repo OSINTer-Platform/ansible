@@ -1,20 +1,13 @@
 - name: "Clone the {{ project_name }} from git"
   git:
-      repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ project_name }}.git"
-      dest: "{{ project_path }}"
-      update: no
-
-- name: "Clone modules"
-  git:
-      repo: "https://{{ git_root_url }}/{{ git_user_name }}/modules.git"
-      dest: "{{ project_path }}/modules"
-      update: no
-
-- name: "Clone profiles"
-  git:
-      repo: "https://{{ git_root_url }}/{{ git_user_name }}/profiles.git"
-      dest: "{{ project_path }}/profiles"
-      update: no
+    dest: "{{ project_path }}/{{ item.dir }}"
+    repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
+    version: "{{ item.branch }}"
+    update: no
+  loop:
+    - { "repo" : "{{ project_name }}", "dir" : "", "branch" : "master" }
+    - { "repo" : "modules", "dir" : "modules/", "branch" : "master" }
+    - { "repo" : "profiles", "dir" : "profiles/", "branch" : "master" }
 
 - name: "Make sure the {{ user_group }} is present"
   group:
