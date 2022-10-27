@@ -1,5 +1,5 @@
 {
-  "python_dependencies": "python-pip",
+  "python_dependencies": ["python-pip"],
   "cron_package": "cronie",
   "cryptography_library": "python-cryptography"
 }
