@@ -1,0 +1,47 @@
+- name: Deploy ML
+  hosts: backend
+  vars_prompt:
+    - name: git_username
+      prompt: "Git username"
+      private: no
+
+    - name: git_password
+      prompt: "Git password"
+      private: yes
+
+  tasks:
+    - name: Import general purpose variables
+      include_vars: "vars/general.json"
+
+    - name: Install source code files
+      include_role:
+        name: update
+      vars:
+        project_name: "ml"
+        user_name: "{{ dbserver_user_name }}"
+
+    - name: Copy the elasticsearch credentials from backend to ml
+      ansible.builtin.copy:
+        src: "{{ root_path }}/{{ dbserver_project_name }}/.elasticsearch.url"
+        dest: "{{ root_path }}/ml/.elasticsearch.url"
+        remote_src: yes
+        mode: 0400
+        owner: "{{ dbserver_user_name }}"
+        group: "{{ dbserver_user_group }}"
+      become: yes
+      become_user: "{{ dbserver_user_name }}"
+
+    - name: Remove old cron-job
+      ansible.builtin.cron:
+        name: OSINTbackend scraping
+        state: absent
+      become: yes
+      become_user: "{{ dbserver_user_name }}"
+
+    - name: Add new cron-job for scraping and ML
+      ansible.builtin.cron:
+        name: OSINTer scraping and ML
+        special_time: hourly
+        job: 'cd {{ root_path }}/{{ dbserver_project_name }} && {{ dbserver_project_name }}env/bin/python3 -m scripts.scrape_and_store && cd {{ root_path }}/ml/ && ./mlenv/bin/python cluster.py'
+      become: yes
+      become_user: "{{ dbserver_user_name }}"
