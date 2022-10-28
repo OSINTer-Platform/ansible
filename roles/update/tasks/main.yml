@@ -1,7 +1,12 @@
+- name: Set credentials
+  set_fact:
+    git_credentials: "{{ git_username }}:{{ git_password }}@"
+  when: git_username is defined and git_password is defined
+
 - name: Update git repos
   git:
     dest: "{{ root_path }}/{{ project_name }}/{{ item.dir }}"
-    repo: "https://{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
+    repo: "https://{{ git_credentials|default('') }}{{ git_root_url }}/{{ git_user_name }}/{{ item.repo }}.git"
     force: "yes"
     version: "{{ item.branch }}"
   loop:
