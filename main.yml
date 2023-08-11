@@ -39,3 +39,9 @@
 
     - name: Import general purpose variables
       ansible.builtin.include_vars: "vars/general.json"
+
+- name: Setup prerequisites
+  hosts: all
+  become: true
+  roles:
+    - prerequisites

@@ -1,0 +1,40 @@
+# vim:ft=yaml.ansible:
+
+- name: Installing python dependencies
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_dependencies }}"
+  when: python_dependencies is defined
+
+- name: Ensure pip is present
+  ansible.builtin.command: python3 -m ensurepip
+  when: python_dependencies is not defined
+  changed_when: python_dependencies is not defined
+
+- name: Install git
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: Install tar for unarchiving files
+  ansible.builtin.package:
+    name: tar
+    state: present
+
+- name: Install ACL used when becomming less priviledged user
+  ansible.builtin.package:
+    name: acl
+    state: present
+
+- name: Make sure the osinter group is present
+  ansible.builtin.group:
+    name: osinter
+
+- name: Create root OSINTer directory
+  ansible.builtin.file:
+    path: /srv/osinter
+    state: directory
+    mode: '0775'
+    owner: root
+    group: osinter
