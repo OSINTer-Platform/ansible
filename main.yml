@@ -40,8 +40,19 @@
     - name: Import general purpose variables
       ansible.builtin.include_vars: "vars/general.json"
 
+    - name: Creating urls for Elasticsearch
+      ansible.builtin.set_fact:
+        elastic_cluster_elastic_url: "https://elastic:{{ elastic_elastic_password }}@localhost:9200"
+        elastic_cluster_osinter_url: "https://osinter:{{ elastic_osinter_password }}@localhost:9200"
+
 - name: Setup prerequisites
   hosts: all
   become: true
   roles:
     - prerequisites
+
+- name: Setup Elasticsearch
+  hosts: elasticsearch
+  become: true
+  roles:
+    - elasticsearch

@@ -1,0 +1,103 @@
+# vim:ft=yaml.ansible:
+
+- name: Setting new root path for Elasticsearch
+  ansible.builtin.set_fact:
+    elastic_dir: "/srv/elastic"
+    current_elastic_dir: "/srv/elastic/{{ elastic_current_version }}"
+
+- name: Get the list of services
+  ansible.builtin.service_facts:
+
+- name: Stop the Elasticsearch service
+  ansible.builtin.systemd:
+    name: elasticsearch.service
+    state: stopped
+  when: "'elasticsearch.service' in services"
+
+- name: Setup user for running Elasticsearch
+  ansible.builtin.user:
+    name: elastic
+    group: elastic
+    create_home: false
+    home: "{{ elastic_dir }}"
+    shell: /bin/sh
+
+- name: Check if SELinux is present and enabled
+  ansible.builtin.command: /usr/sbin/selinuxenabled
+  register: selinux_status
+  failed_when: false
+  changed_when: false
+
+- name: Apply new SELinux context for custom Elasticsearch bin directory to make it executable
+  ansible.builtin.command: chcon -Rv --type=bin_t "{{ current_elastic_dir }}/bin"
+  when: selinux_status.rc == 0
+  changed_when: selinux_status.rc == 0
+
+
+- name: Change vm.max_map_count
+  ansible.builtin.shell: "echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf && sysctl -p"
+  changed_when: true
+
+- name: Install service for running the Elasticsearch
+  ansible.builtin.template:
+    src: elasticsearch_service.j2
+    dest: /etc/systemd/system/elasticsearch.service
+    mode: '0644'
+    force: true
+
+- name: Create folder for holding the Elasticsearch files
+  ansible.builtin.file:
+    path: "{{ elastic_dir }}"
+    state: directory
+    mode: '0740'
+    owner: elastic
+    group: elastic
+
+
+- name: Setup elastic files and bootstrap password
+  ansible.builtin.include_tasks: userland.yml
+  args:
+    apply:
+      become: true
+      become_user: elastic
+
+- name: Restart Elasticsearch service, also issue daemon-reload to pick up config changes
+  ansible.builtin.systemd:
+    state: restarted
+    enabled: true
+    daemon_reload: true
+    name: elasticsearch.service
+
+- name: Wait for Elasticsearch to come online again
+  ansible.builtin.wait_for:
+    port: 9200
+
+- name: Wait to make sure Elasticsearch is properly initialized
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Create the osinter roles in Elasticsearch
+  ansible.builtin.uri:
+    url: "{{ elastic_cluster_elastic_url }}/_security/role/osinter"
+    method: PUT
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      indices:
+        - names:
+            - osinter_*
+          privileges:
+            - all
+
+- name: Setup the osinter user in Elasticsearch
+  ansible.builtin.uri:
+    url: "{{ elastic_cluster_elastic_url }}/_security/user/osinter"
+    method: PUT
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      password: "{{ elastic_osinter_password }}"
+      roles:
+        - osinter

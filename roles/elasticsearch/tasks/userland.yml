@@ -1,0 +1,62 @@
+# vim:ft=yaml.ansible:
+
+- name: Download and extract Elasticsearch files
+  ansible.builtin.unarchive:
+    src: "{{ elastic_install_url }}"
+    dest: "{{ elastic_dir }}"
+    remote_src: true
+    keep_newer: true
+    mode: '0740'
+    owner: elastic
+    group: elastic
+    creates: "{{ current_elastic_dir }}"
+    list_files: true
+  register: elastic_archive_contents
+
+- name: "Rename elasticsearch folder to \"{{ elastic_current_version }}\""
+  ansible.builtin.command: >
+    mv -f
+    "{{ elastic_archive_contents.dest | default(omit) }}/
+    {{ elastic_archive_contents.files[0] | default(omit) }}"
+    "{{ current_elastic_dir }}"
+  args:
+    creates: "{{ current_elastic_dir }}"
+
+- name: Move config directory to elasticsearch root
+  ansible.builtin.command: mv -f "{{ current_elastic_dir }}/config" "{{ elastic_dir }}/config"
+  args:
+    removes: "{{ current_elastic_dir }}/config"
+    creates: "{{ elastic_dir }}/config"
+
+- name: "Install config file for elasticsearch"
+  ansible.builtin.template:
+    src: elasticsearch_config.j2
+    dest: "{{ elastic_dir }}/config/elasticsearch.yml"
+    mode: '0664'
+    force: false
+
+- name: Create Elasticsearch keystore
+  ansible.builtin.command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore create"
+    stdin: "n"
+  register: keystore_creation
+  changed_when: "'Exiting without creating keystore' not in keystore_creation.stdout"
+  environment:
+    ES_PATH_CONF: "{{ elastic_dir }}/config/"
+
+- name: Remove existing bootstrap password
+  ansible.builtin.command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore remove 'bootstrap.password'"
+  register: password_remove
+  failed_when: false
+  changed_when: "'does not exist in the keystore' not in password_remove.stdout"
+  environment:
+    ES_PATH_CONF: '{{ elastic_dir }}/config/'
+
+- name: Set password for elastic user in Elasticsearch
+  ansible.builtin.command:
+    cmd: "{{ current_elastic_dir }}/bin/elasticsearch-keystore add 'bootstrap.password'"
+    stdin: "{{ elastic_elastic_password }}"
+  changed_when: true
+  environment:
+    ES_PATH_CONF: '{{ elastic_dir }}/config/'
