@@ -56,3 +56,9 @@
   become: true
   roles:
     - elasticsearch
+
+- name: Setup backend
+  hosts: backend
+  become: true
+  roles:
+    - backend

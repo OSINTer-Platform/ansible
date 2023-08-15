@@ -1,0 +1,59 @@
+# vim:ft=yaml.ansible:
+
+- name: Clone backend
+  ansible.builtin.git:
+    dest: /srv/osinter/backend/
+    repo: https://gitlab.com/osinter/backend.git
+    version: "{{ project_branch }}"
+    update: true
+    force: true
+
+- name: Clone modules
+  ansible.builtin.git:
+    dest: /srv/osinter/backend/modules/
+    repo: https://gitlab.com/osinter/modules.git
+    version: "{{ project_branch }}"
+    update: true
+    force: true
+
+- name: Clone profiles
+  ansible.builtin.git:
+    dest: /srv/osinter/backend/profiles/
+    repo: https://gitlab.com/osinter/profiles.git
+    version: "{{ project_branch }}"
+    update: true
+    force: true
+
+- name: Create python venv
+  ansible.builtin.command: python3 -m venv venv
+  args:
+    chdir: /srv/osinter/backend
+    creates: /srv/osinter/backend/venv
+
+- name: Update pip # noqa: package-latest
+  ansible.builtin.pip:
+    name: pip
+    state: latest
+    virtualenv: /srv/osinter/backend/venv
+
+- name: Install python dependencies for backend
+  ansible.builtin.pip:
+    requirements: /srv/osinter/backend/requirements.txt
+    virtualenv: /srv/osinter/backend/venv
+
+- name: Setup file with secret enviroment variables
+  ansible.builtin.template:
+    src: env.j2
+    dest: /srv/osinter/backend/.env
+    mode: '0400'
+    force: true
+
+- name: Initialize elasticsearch index
+  ansible.builtin.shell: cd /srv/osinter/backend && venv/bin/python3 -m scripts initiate-db
+  changed_when: true
+
+- name: Setup crontab for scraping
+  ansible.builtin.cron:
+    name: OSINTbackend scraping
+    special_time: hourly
+    job: cd /srv/osinter/backend && venv/bin/python3 -m scripts scrape

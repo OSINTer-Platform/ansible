@@ -1,0 +1,30 @@
+# vim:ft=yaml.ansible:
+
+- name: Setup user for running the backend
+  ansible.builtin.user:
+    name: osinter-back
+    group: osinter
+    shell: /bin/bash
+
+- name: Install firefox for doing scraping
+  ansible.builtin.package:
+    name: "{{ firefox_package }}"
+    state: present
+
+- name: Install the cron daemon
+  ansible.builtin.package:
+    name: "{{ cron_package }}"
+    state: present
+
+- name: Start the newly installed cron daemon and enable it
+  ansible.builtin.service:
+    name: "{{ cron_daemon if cron_daemon is defined else cron_package }}"
+    state: started
+    enabled: true
+
+- name: Setup project files
+  ansible.builtin.include_tasks: userland.yml
+  args:
+    apply:
+      become: true
+      become_user: osinter-back
