@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve the OSINTer API
+After=network.target
+
+[Service]
+User=osinter-api
+Group=osinter
+WorkingDirectory=/srv/osinter/api/
+Environment="PATH=/srv/osinter/api/venv/bin"
+ExecStart=/srv/osinter/api/venv/bin/gunicorn --bind 127.0.0.1:8000 -k uvicorn.workers.UvicornWorker app.main:app
+
+[Install]
+WantedBy=multi-user.target

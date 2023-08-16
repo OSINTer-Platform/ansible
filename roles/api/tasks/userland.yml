@@ -1,0 +1,49 @@
+# vim:ft=yaml.ansible:
+
+- name: Clone api
+  ansible.builtin.git:
+    dest: /srv/osinter/api/
+    repo: https://gitlab.com/osinter/api.git
+    version: "{{ project_branch }}"
+    update: true
+    force: true
+
+- name: Clone modules
+  ansible.builtin.git:
+    dest: /srv/osinter/api/modules/
+    repo: https://gitlab.com/osinter/modules.git
+    version: "{{ project_branch }}"
+    update: true
+    force: true
+
+- name: Clone profiles
+  ansible.builtin.git:
+    dest: /srv/osinter/api/profiles/
+    repo: https://gitlab.com/osinter/profiles.git
+    version: "{{ project_branch }}"
+    update: true
+    force: true
+
+- name: Create python venv
+  ansible.builtin.command: python3 -m venv venv
+  args:
+    chdir: /srv/osinter/api
+    creates: /srv/osinter/api/venv
+
+- name: Update pip # noqa: package-latest
+  ansible.builtin.pip:
+    name: pip
+    state: latest
+    virtualenv: /srv/osinter/api/venv
+
+- name: Install python dependencies for api
+  ansible.builtin.pip:
+    requirements: /srv/osinter/api/requirements.txt
+    virtualenv: /srv/osinter/api/venv
+
+- name: Setup file with secret enviroment variables
+  ansible.builtin.template:
+    src: env.j2
+    dest: /srv/osinter/api/.env
+    mode: '0400'
+    force: true

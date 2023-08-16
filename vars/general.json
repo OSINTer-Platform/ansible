@@ -3,5 +3,6 @@
   "elastic_osinter_password": "",
   "elastic_install_url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.9.0-linux-x86_64.tar.gz",
   "elastic_current_version": "elasticsearch-8.9.0",
+  "couchdb_admin_password": "",
   "project_branch": "testing"
 }

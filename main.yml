@@ -62,3 +62,9 @@
   become: true
   roles:
     - backend
+
+- name: Setup api
+  hosts: api
+  become: true
+  roles:
+    - api

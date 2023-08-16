@@ -1,0 +1,66 @@
+# vim:ft=yaml.ansible:
+
+- name: Setup user for running the api
+  ansible.builtin.user:
+    name: osinter-api
+    group: osinter
+    shell: /bin/bash
+
+- name: Install couchdb
+  ansible.builtin.package:
+    name: couchdb
+    state: present
+
+- name: Set admin password for couchdb
+  ansible.builtin.lineinfile:
+    path: "/etc/couchdb/local.ini"
+    insertafter: EOF
+    regexp: ';?admin'
+    line: 'admin = {{ couchdb_admin_password }}'
+
+- name: Ensure couchdb has been restarted and is running
+  ansible.builtin.systemd:
+    state: restarted
+    enabled: true
+    name: couchdb.service
+
+- name: Setup project files
+  ansible.builtin.include_tasks: userland.yml
+  args:
+    apply:
+      become: true
+      become_user: osinter-api
+
+- name: Install service for running the webserver
+  ansible.builtin.template:
+    src: api_service.j2
+    dest: /etc/systemd/system/OSINTapi.service
+    mode: '0640'
+    owner: root
+    group: root
+
+- name: Restart custom service, also issue daemon-reload to pick up config changes
+  ansible.builtin.systemd:
+    state: restarted
+    enabled: true
+    daemon_reload: true
+    name: OSINTapi.service
+
+- name: Check if SELinux is present and enabled
+  ansible.builtin.command: /usr/sbin/selinuxenabled
+  failed_when: false
+  changed_when: false
+  register: selinux_status
+
+- name: Apply executable SELinux context to venv in API directory
+  ansible.builtin.command: chcon -Rv --type=bin_t /srv/osinter/api/venv/bin
+  when: selinux_status.rc == 0
+  changed_when: selinux_status.rc == 0
+
+- name: Restart the gunicorn api service to have it work with the new security context
+  ansible.builtin.systemd:
+    state: restarted
+    name: "OSINTapi.service"
+  become: true
+  become_user: root
+  when: selinux_status.rc == 0
