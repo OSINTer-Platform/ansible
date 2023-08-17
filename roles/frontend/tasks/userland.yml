@@ -1,0 +1,39 @@
+# vim:ft=yaml.ansible:
+
+- name: Clone webfrontend
+  ansible.builtin.git:
+    dest: /srv/osinter/webfrontend/
+    repo: https://gitlab.com/osinter/webfrontend2.git
+    version: master
+    update: true
+    force: true
+
+- name: Clone blog for frontend build
+  ansible.builtin.git:
+    dest: /srv/osinter/webfrontend/src/lib/blog/
+    repo: https://gitlab.com/osinter/blog.git
+    version: master
+    update: true
+    force: true
+
+- name: Copy blog images to static folder
+  ansible.builtin.copy:
+    remote_src: true
+    src: /srv/osinter/webfrontend/src/lib/blog/blog-images
+    dest: /srv/osinter/webfrontend/static
+    mode: preserve
+
+- name: Install frontend dependencies from npm
+  ansible.builtin.command:
+    cmd: npm install
+    chdir: /srv/osinter/webfrontend
+  register: npm_install
+  changed_when: "'up to date' not in npm_install.stdout"
+
+- name: Build frontend
+  ansible.builtin.command:
+    cmd: npm run build
+    chdir: /srv/osinter/webfrontend
+  changed_when: true
+  environment:
+    PUBLIC_API_BASE: "https://{{ osinter_instance_hostname }}/api"

@@ -1,0 +1,39 @@
+# vim:ft=yaml.ansible:
+
+- name: Setup user for running the frontend
+  ansible.builtin.user:
+    name: osinter-front
+    group: osinter
+    shell: /bin/bash
+
+- name: Install nodejs
+  ansible.builtin.package:
+    name: nodejs
+    state: present
+
+- name: Install npm
+  ansible.builtin.package:
+    name: npm
+    state: present
+
+- name: Setup project files
+  ansible.builtin.include_tasks: userland.yml
+  args:
+    apply:
+      become: true
+      become_user: osinter-front
+
+- name: Install service for running the webserver
+  ansible.builtin.template:
+    src: front_service.j2
+    dest: /etc/systemd/system/OSINTfront.service
+    mode: '0640'
+    owner: root
+    group: root
+
+- name: Restart custom service, also issue daemon-reload to pick up config changes
+  ansible.builtin.systemd:
+    state: restarted
+    enabled: true
+    daemon_reload: true
+    name: OSINTfront.service

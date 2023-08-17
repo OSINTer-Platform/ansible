@@ -68,3 +68,9 @@
   become: true
   roles:
     - api
+
+- name: Setup the webfrontend
+  hosts: frontend
+  become: true
+  roles:
+    - frontend

@@ -1,0 +1,19 @@
+[Unit]
+Description=OSINTer node frontend
+After=network.target
+
+[Service]
+Environment="HOST=127.0.0.1"
+Environment="PROTOCOL_HEADER=X-Forwarded-Proto"
+Environment="HOST_HEADER=X-Forwarded-Host"
+Environment="ADDRESS_HEADER=X-Real-IP"
+
+ExecStart=node /srv/osinter/webfrontend/build
+Type=simple
+Restart=always
+
+User=osinter-front
+Group=osinter
+
+[Install]
+WantedBy=default.target
