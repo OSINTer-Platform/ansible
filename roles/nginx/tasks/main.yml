@@ -1,0 +1,53 @@
+# vim:ft=yaml.ansible:
+
+- name: Install nginx
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Setup user for running nginx
+  ansible.builtin.user:
+    name: http
+    group: http
+    create_home: false
+    shell: /bin/sh
+
+- name: Create the needed folders
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  with_items: ["/etc/nginx/sites-available", "/etc/nginx/sites-enabled"]
+
+- name: Create main nginx config file
+  ansible.builtin.template:
+    src: nginx_conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: '0644'
+    force: true
+
+- name: Create nginx vhost config file
+  ansible.builtin.template:
+    src: nginx_site_conf.j2
+    dest: /etc/nginx/sites-available/osinter.conf
+    mode: '0644'
+    force: true
+
+- name: Create symlinks
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/osinter.conf
+    dest: /etc/nginx/sites-enabled/osinter.conf
+    state: link
+
+- name: Remove default nginx vhost configuration
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Start/restart nginx to make sure it's running and has picked up new config files
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: true

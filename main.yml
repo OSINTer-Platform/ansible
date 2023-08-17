@@ -74,3 +74,9 @@
   become: true
   roles:
     - frontend
+
+- name: Setup nginx
+  hosts: nginx
+  become: true
+  roles:
+    - nginx
