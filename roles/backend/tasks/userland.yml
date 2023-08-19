@@ -55,5 +55,5 @@
 - name: Setup crontab for scraping
   ansible.builtin.cron:
     name: OSINTbackend scraping
-    special_time: hourly
+    minute: 0
     job: cd /srv/osinter/backend && venv/bin/python3 -m scripts scrape
